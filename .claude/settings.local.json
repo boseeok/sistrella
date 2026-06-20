@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan *)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(powershell.exe -NoProfile -Command \"Get-Process mysqld -ErrorAction SilentlyContinue | Stop-Process -Force; Start-Sleep 2\")",
+      "Bash(\"/c/laragon/bin/mysql/mysql-5.7.33-winx64/bin/mysqld\" --innodb_force_recovery=6 --log-error=\"C:\\\\\\\\laragon\\\\\\\\data\\\\\\\\mysql\\\\\\\\mysqld.log\")",
+      "Bash(powershell.exe -NoProfile -Command \"\\(Get-NetTCPConnection -State Listen -LocalPort 3306 -ErrorAction SilentlyContinue|Measure-Object\\).Count\")",
+      "Read(//c/laragon/data/mysql/**)",
+      "Bash(\"/c/laragon/bin/mysql/mysql-5.7.33-winx64/bin/mysql\" -u root --host=127.0.0.1 -N -e \"SHOW DATABASES\")",
+      "Bash(grep -viE \"^\\(information_schema|performance_schema|sys|mysql\\)$\")"
+    ]
+  }
+}
