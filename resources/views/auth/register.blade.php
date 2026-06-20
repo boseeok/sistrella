@@ -16,10 +16,10 @@
             <input type="email" name="email" value="{{ old('email') }}" class="form-control @error('email') is-invalid @enderror" required>
             @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
-        <div class="mb-3">
-            <label class="form-label">Phone <span class="text-muted">(optional)</span></label>
-            <input type="text" name="phone" value="{{ old('phone') }}" class="form-control">
-        </div>
+
+        <div class="mb-3"><label class="form-label">Phone *</label>
+        <input type="text" name="phone" value="{{ old('phone') }}" class="form-control" required maxlength="10" minlength="10" pattern="[0-9]{10}" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"></div>
+      
         <div class="mb-3">
             <label class="form-label">Password</label>
             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" required>

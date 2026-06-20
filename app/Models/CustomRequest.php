@@ -17,7 +17,7 @@ class CustomRequest extends Model
     ];
 
     protected $casts = [
-        'preferred_delivery_date' => 'date',
+        'preferred_delivery_date' => ['required', 'date', 'after_or_equal:today'],
         'quoted_price'            => 'decimal:2',
         'quoted_at'               => 'datetime',
     ];

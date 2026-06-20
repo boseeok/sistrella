@@ -24,7 +24,7 @@
                 <div class="col-md-4"><label class="form-label small">Preferred color</label><input type="text" name="color" value="{{ old('color') }}" class="form-control"></div>
                 <div class="col-md-4"><label class="form-label small">Size</label><input type="text" name="size" value="{{ old('size') }}" class="form-control" placeholder="Small / Medium / Large"></div>
                 <div class="col-md-4"><label class="form-label small">Quantity *</label><input type="number" name="quantity" value="{{ old('quantity', 1) }}" min="1" max="999" class="form-control" required></div>
-                <div class="col-md-6"><label class="form-label small">Preferred delivery date</label><input type="date" name="preferred_delivery_date" value="{{ old('preferred_delivery_date') }}" class="form-control"></div>
+                <div class="col-md-6"><label class="form-label small">Preferred delivery date</label><input type="date" name="preferred_delivery_date" value="{{ old('preferred_delivery_date') }}" class="form-control" min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d', strtotime('+7 days')) }}"></div>
                 <div class="col-12"><label class="form-label small">Details / notes</label><textarea name="notes" rows="3" class="form-control" placeholder="Describe colors, theme, dimensions, references...">{{ old('notes') }}</textarea></div>
                 <div class="col-12">
                     <label class="form-label small">Inspiration images (up to 6)</label>

@@ -23,7 +23,7 @@ class AuthController extends Controller
         $data = $request->validate([
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
-            'phone'    => ['nullable', 'string', 'max:30'],
+            'phone'    => ['required', 'digits:10', 'unique:users,phone'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
@@ -50,6 +50,7 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required'],
+            
         ]);
 
         $guestSession = session()->getId();

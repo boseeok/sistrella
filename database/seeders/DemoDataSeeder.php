@@ -300,7 +300,7 @@ class DemoDataSeeder extends Seeder
                 'color'          => collect(['Pastel Pink', 'Cream', 'Sky Blue', 'Mint'])->random(),
                 'size'           => collect(['Small', 'Medium', 'Large'])->random(),
                 'quantity'       => 1,
-                'preferred_delivery_date' => now()->addWeeks(rand(2, 6)),
+               'preferred_delivery_date' => ['required', 'date', 'after_or_equal:today'],
                 'quoted_price'   => $price,
                 'quoted_at'      => $price ? now()->subDays(rand(1, 5)) : null,
                 'quote_note'     => $price ? 'Includes premium yarn and gift packaging.' : null,

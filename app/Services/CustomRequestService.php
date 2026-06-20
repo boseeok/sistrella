@@ -35,7 +35,7 @@ class CustomRequestService
                 'color'                   => $data['color'] ?? null,
                 'size'                    => $data['size'] ?? null,
                 'quantity'                => $data['quantity'] ?? 1,
-                'preferred_delivery_date' => $data['preferred_delivery_date'] ?? null,
+                'preferred_delivery_date' => ['required', 'date', 'after_or_equal:today'],
                 'status'                  => 'pending',
             ]);
 

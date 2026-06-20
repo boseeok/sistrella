@@ -3,7 +3,7 @@
     <div class="row g-2">
         <div class="col-md-6 mb-3"><label class="form-label small">Name *</label><input type="text" name="name" value="{{ old('name', $st->name ?? '') }}" class="form-control" required></div>
         <div class="col-md-6 mb-3"><label class="form-label small">Email *</label><input type="email" name="email" value="{{ old('email', $st->email ?? '') }}" class="form-control" required></div>
-        <div class="col-md-6 mb-3"><label class="form-label small">Phone</label><input type="text" name="phone" value="{{ old('phone', $st->phone ?? '') }}" class="form-control"></div>
+      <div class="col-md-6 mb-3"><label class="form-label small">Phone *</label><input type="text" name="phone" value="{{ old('phone', $st->phone ?? '') }}" class="form-control" required maxlength="10" minlength="10" pattern="[0-9]{10}" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"></div>
         <div class="col-md-6 mb-3"><label class="form-label small">Password {{ $st ? '(leave blank to keep)' : '*' }}</label><input type="password" name="password" class="form-control" {{ $st ? '' : 'required' }}></div>
         <div class="col-md-6 mb-3"><label class="form-label small">Confirm password</label><input type="password" name="password_confirmation" class="form-control"></div>
     </div>
