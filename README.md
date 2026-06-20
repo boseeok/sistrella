@@ -97,24 +97,6 @@ Visit **http://127.0.0.1:8000**.
 
 ---
 
-## 🔑 Seeded Accounts
-
-All passwords are `password`.
-
-| Role | Email | Access |
-|------|-------|--------|
-| Admin | `admin@crochetstore.test` | Full admin panel |
-| Manager | `manager@crochetstore.test` | All except roles/staff |
-| Staff | `staff@crochetstore.test` | Orders, payments, inventory, custom requests |
-| Customer | `aarati@example.com` (and 4 more `*@example.com`) | Storefront only |
-
-Admin login: **http://127.0.0.1:8000/admin/login**
-
-The seeders also create categories, ~25 products (with flash sales), coupons
-(`WELCOME10`, `FLAT200`, `FESTIVE15`), banners, demo orders across every status,
-custom requests, reviews and newsletter/contact records.
-
----
 
 ## 💰 The Prepayment Policy (core business rule)
 
