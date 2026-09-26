@@ -46,7 +46,13 @@ ENV APP_NAME=Sistrella \
     QUEUE_CONNECTION=sync \
     FILESYSTEM_DISK=local \
     LOG_CHANNEL=stderr \
-    MAIL_MAILER=log
+    MAIL_MAILER=log \
+    DEMO_MODE=true \
+    DEMO_ADMIN_READ_ONLY=true \
+    SEED_ADMIN_PASSWORD=password
+# ^ Public demo defaults: the login is shown on /admin/login and the admin panel
+#   is read-only, so this password is intentionally public. Override any of them
+#   in the host's environment settings (e.g. set DEMO_MODE=false for a real store).
 
 # Seed once at build time only to download the free-licence demo photos into the image;
 # the database itself is rebuilt when the container starts.

@@ -15,8 +15,8 @@ services:
       # Visitors can browse the whole admin panel but not change anything.
       - key: DEMO_ADMIN_READ_ONLY
         value: "true"
-      # Random password for the demo staff accounts, shown on the demo's admin login page.
+      # Public demo password for the staff accounts (shown on /admin/login; admin is read-only).
       - key: SEED_ADMIN_PASSWORD
-        generateValue: true
+        value: password
       - key: SESSION_SECURE_COOKIE
         value: "true"
