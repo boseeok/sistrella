@@ -5,6 +5,10 @@ pieces, satin ribbon bouquets and fuzzy wire flowers. It ships with a customer s
 role-based admin panel, a REST API, PDF invoices, and a signature **prepayment /
 cash-on-delivery** ordering policy tailored for WhatsApp-driven sales in Nepal.
 
+**🔗 Live demo: [crochett-shop.onrender.com](https://crochett-shop.onrender.com/)** — free hosting, so the
+first visit after a quiet spell can take about a minute to wake up. The demo resets itself, and the
+admin panel (login shown on [/admin/login](https://crochett-shop.onrender.com/admin/login)) is read-only.
+
 ---
 
 ## ✨ Features
