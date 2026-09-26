@@ -146,7 +146,8 @@ class GiftBoutiqueTest extends TestCase
             ->assertSee('Blush Pink')->assertSee('12 roses')
             ->assertSee('name="variant_id"', false);
 
-        $add = fn (array $data) => $this->keepSession()->postJson('/cart/add', ['product_id' => $bouquet->id] + $data);
+        $this->actingAs(User::factory()->create()); // checkout requires an account
+        $add = fn (array $data) => $this->postJson('/cart/add', ['product_id' => $bouquet->id] + $data);
 
         $add([])->assertStatus(422)->assertJson(['ok' => false]);                               // option required
         $add(['variant_id' => $foreign->id])->assertStatus(422);                                // other product's variant

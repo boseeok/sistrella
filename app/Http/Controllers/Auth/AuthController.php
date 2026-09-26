@@ -36,8 +36,9 @@ class AuthController extends Controller
         Auth::login($user, true);
         app(CartService::class)->mergeGuestCart($guestSession, $user->id);
 
-        return redirect()->route('verification.notice')
-            ->with('success', 'Welcome to Crochet Store! Please verify your email.');
+        // Shoppers sent here from checkout go straight back to it.
+        return redirect()->intended(route('verification.notice'))
+            ->with('success', 'Welcome to '.setting('store_name', 'Sistrella').'! Please verify your email when you can.');
     }
 
     public function showLogin(): View

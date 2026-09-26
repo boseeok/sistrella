@@ -49,8 +49,9 @@ Route::controller(WishlistController::class)->prefix('wishlist')->name('wishlist
     Route::delete('/{product}', 'remove')->name('remove');
 });
 
-// Checkout & order placement (guest checkout allowed)
-Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
+// Checkout & order placement: customers must be logged in (the guest cart is
+// merged into their account when they log in or register).
+Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->middleware('auth')->group(function () {
     Route::get('/', 'index')->name('index');
     Route::post('/place', 'place')->name('place');
 });

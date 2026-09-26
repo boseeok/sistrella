@@ -15,13 +15,6 @@
     <x-checkout-steps :current="2" />
     <h1 class="h2 mb-4">Checkout</h1>
 
-    @guest
-        <div class="prepay-note p-3 mb-4 small d-flex flex-wrap gap-2 justify-content-between align-items-center">
-            <span><i class="bi bi-person-circle me-1 text-brand"></i>Checking out as a guest. Have an account? Log in to use saved addresses and track orders.</span>
-            <a href="{{ route('login') }}" class="btn btn-sm btn-outline-brand">Log in</a>
-        </div>
-    @endguest
-
     <form action="{{ route('checkout.place') }}" method="POST" novalidate class="needs-validation">@csrf
         <div class="row g-4">
             <div class="col-lg-7">

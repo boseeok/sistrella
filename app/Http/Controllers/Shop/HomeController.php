@@ -56,19 +56,14 @@ class HomeController extends Controller
     }
 
     /**
-     * Occasions and curated collections flagged for the home page. Curated
-     * collections borrow a product photo when they have no image of their own.
+     * Occasions flagged for the home page's "Shop by occasion" tiles.
      */
     private function giftCollections(): array
     {
-        $featured = ProductCollection::active()->where('is_featured', true)->ordered()
-            ->withCount(['products' => fn ($q) => $q->active()])
-            ->with(['products' => fn ($q) => $q->active()->with('primaryImage')->orderByDesc('is_featured')->limit(1)])
-            ->get();
-
         return [
-            'occasions' => $featured->where('type', 'occasion')->values(),
-            'curated'   => $featured->where('type', 'curated')->values(),
+            'occasions' => ProductCollection::active()->occasions()->where('is_featured', true)->ordered()
+                ->withCount(['products' => fn ($q) => $q->active()])
+                ->get(),
         ];
     }
 

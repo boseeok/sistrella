@@ -14,13 +14,13 @@ admin panel (login shown on [/admin/login](https://crochett-shop.onrender.com/ad
 ## ✨ Features
 
 ### Storefront (customer-facing)
-- Home page with hero banners, product-line tiles, **shop by occasion**, curated collections, new-arrival / flash-sale / best-seller / trending rails, reviews and recently-viewed products
+- Home page with hero banners, product-line tiles, **shop by occasion**, new-arrival / flash-sale / best-seller / trending rails, reviews and recently-viewed products
 - **Product lines** as top-level categories (Crochet, Ribbon Bouquets, Fuzzy Wire) with sub-categories of any depth — add jewellery, candles or gift boxes from the admin without code changes
 - **Occasions & curated collections** (Birthday, Anniversary, Valentine's Day, Graduation…) with their own pages and a shop filter
 - Catalogue with multi-word search, category / occasion / collection / price / stock filters and sorting
 - Product detail with image gallery and zoom, **colour swatches & size options** (live price and per-option stock), buy-now, reviews, related products and a WhatsApp inquiry button
 - Database-backed cart (guests + logged-in users), save-for-later, coupons, live AJAX cart badge
-- Guest & authenticated checkout with the prepayment policy applied automatically
+- Checkout for logged-in customers (guests can browse and fill a cart; it is kept when they log in or sign up), with the prepayment policy applied automatically
 - Order confirmation, **WhatsApp order hand-off**, payment-proof upload, and order tracking
 - Customer account: dashboard, orders, addresses, wishlist, profile & password
 - Custom / personalised gift requests (product line, occasion, budget, inspiration images)
@@ -39,7 +39,7 @@ admin panel (login shown on [/admin/login](https://crochett-shop.onrender.com/ad
 - Custom requests (quote, status, convert to order)
 - Reports (sales, inventory, customers) with CSV export
 - Marketing (newsletter subscribers, contact messages)
-- Settings (store identity, prepayment policy, payment details, social links)
+- Settings (store identity, prepayment policy, payment details, social links, **WhatsApp alerts** to the owner for new orders, payments, custom requests and messages)
 - Roles & permissions (RBAC) and staff management
 
 ### Platform

@@ -44,6 +44,18 @@ return [
         'base_url' => 'https://wa.me/',
     ],
 
+    /*
+    | WhatsApp alerts to the shop owner (new orders, payments, custom requests,
+    | messages) via CallMeBot's free API. Normally configured in Admin › Settings;
+    | these env values are the fallback (handy on hosts where the database resets).
+    | number: empty = the store WhatsApp number.
+    */
+    'whatsapp_alerts' => [
+        'enabled'           => (bool) env('WHATSAPP_ALERTS_ENABLED', false),
+        'number'            => env('WHATSAPP_ALERTS_NUMBER'),
+        'callmebot_api_key' => env('CALLMEBOT_API_KEY'),
+    ],
+
     'social' => [
         'instagram' => env('INSTAGRAM_URL', 'https://instagram.com/crochetstore'),
         'facebook'  => env('FACEBOOK_URL', 'https://facebook.com/crochetstore'),

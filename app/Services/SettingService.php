@@ -109,6 +109,9 @@ class SettingService
             'facebook_url'         => config('crochet.social.facebook'),
             'low_stock_threshold'  => config('crochet.inventory.low_stock_threshold'),
             'tax_rate'             => config('crochet.tax.rate'),
+            'whatsapp_alerts_enabled' => config('crochet.whatsapp_alerts.enabled'),
+            'whatsapp_alert_number'   => config('crochet.whatsapp_alerts.number'),
+            'callmebot_api_key'       => config('crochet.whatsapp_alerts.callmebot_api_key'),
             default                => match (true) {
                 str_starts_with($key, 'promo_') => config('crochet.promo.'.substr($key, 6)),
                 str_starts_with($key, 'about_') => config('crochet.about.'.substr($key, 6)),

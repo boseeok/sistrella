@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\SettingService;
+use App\Services\WhatsAppAlertService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -14,10 +15,12 @@ class SettingController extends Controller
     {
     }
 
-    public function index(): View
+    public function index(WhatsAppAlertService $whatsapp): View
     {
         return view('admin.settings.index', [
-            'settings' => $this->settings->all(),
+            'settings'        => $this->settings->all(),
+            'alertRecipient'  => $whatsapp->recipient(),
+            'hasCallMeBotKey' => filled(setting('callmebot_api_key')),
         ]);
     }
 
@@ -45,7 +48,10 @@ class SettingController extends Controller
             'instagram_url'        => ['nullable', 'string', 'max:255'],
             'facebook_url'         => ['nullable', 'string', 'max:255'],
             'tiktok_url'           => ['nullable', 'string', 'max:255'],
-        ]);
+            // WhatsApp alerts to the owner (CallMeBot)
+            'whatsapp_alert_number' => ['nullable', 'string', 'max:40', 'regex:/^[+\d\s()-]*$/'],
+            'callmebot_api_key'     => ['nullable', 'string', 'max:100'],
+        ], ['whatsapp_alert_number.regex' => 'The alert number may only contain digits, spaces, +, - and brackets.']);
 
         // Cast numerics so SettingService stores the right type.
         foreach (['prepayment_threshold', 'prepayment_percent', 'tax_rate', 'flat_shipping'] as $k) {
@@ -53,8 +59,31 @@ class SettingController extends Controller
         }
         $data['low_stock_threshold'] = (int) $data['low_stock_threshold'];
 
+        $data['whatsapp_alerts_enabled'] = $request->boolean('whatsapp_alerts_enabled');
+        $data['whatsapp_alert_number'] = $data['whatsapp_alert_number'] ?? '';
+
+        // The API key is never shown again: an empty box keeps the saved key.
+        if (blank($data['callmebot_api_key'] ?? null)) {
+            unset($data['callmebot_api_key']);
+        }
+
         $this->settings->setMany($data);
 
         return back()->with('success', 'Settings saved.');
+    }
+
+    /**
+     * Send a test WhatsApp alert with the saved settings.
+     */
+    public function testWhatsApp(WhatsAppAlertService $whatsapp): RedirectResponse
+    {
+        $result = $whatsapp->send(setting('store_name', 'Sistrella').': test alert from Admin › Settings. WhatsApp alerts are working!');
+
+        return back()->with(
+            $result['ok'] ? 'success' : 'error',
+            $result['ok']
+                ? 'Test message sent to '.$whatsapp->recipient().' — check WhatsApp.'
+                : 'WhatsApp test failed: '.$result['message']
+        );
     }
 }

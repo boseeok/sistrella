@@ -125,7 +125,13 @@
                         <div class="prepay-note p-3 mt-3 small"><i class="bi bi-truck text-brand me-1"></i>Eligible for full Cash on Delivery.</div>
                     @endif
 
-                    <a href="{{ route('checkout.index') }}" class="btn btn-brand btn-lg w-100 mt-3">Checkout <i class="bi bi-arrow-right ms-1"></i></a>
+                    @auth
+                        <a href="{{ route('checkout.index') }}" class="btn btn-brand btn-lg w-100 mt-3">Checkout <i class="bi bi-arrow-right ms-1"></i></a>
+                    @else
+                        {{-- Checkout needs an account; the auth redirect brings them back here after login/sign-up. --}}
+                        <a href="{{ route('checkout.index') }}" class="btn btn-brand btn-lg w-100 mt-3"><i class="bi bi-person me-1"></i>Log in to checkout</a>
+                        <p class="small text-muted text-center mt-2 mb-0">New here? <a href="{{ route('register') }}">Create an account</a> — your cart is kept.</p>
+                    @endauth
                     <ul class="list-unstyled small text-muted mt-3 mb-0">
                         <li class="mb-1"><i class="bi bi-lock me-1"></i>Secure checkout, no card details needed</li>
                         <li><i class="bi bi-arrow-repeat me-1"></i>Questions? We reply on WhatsApp</li>

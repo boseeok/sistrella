@@ -6,6 +6,7 @@ use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -47,7 +48,7 @@ class StorefrontTest extends TestCase
             ->assertSee('Fuzzy Wire')
             ->assertSee('Shop by occasion')
             ->assertSee(route('collections.show', 'valentines-day'), false)
-            ->assertSee('Curated collections')
+            ->assertDontSee('Curated collections')
             ->assertSee('New arrivals')
             ->assertDontSee('Featured pieces')
             ->assertSee('Amigurumi')
@@ -151,38 +152,66 @@ class StorefrontTest extends TestCase
 
     public function test_buy_now_goes_straight_to_checkout(): void
     {
+        $this->actingAs(User::factory()->create());
         $product = Product::where('slug', 'penguin-keychain')->first();
 
-        $this->keepSession()->post('/cart/add', ['product_id' => $product->id, 'buy_now' => 1])
+        $this->post('/cart/add', ['product_id' => $product->id, 'buy_now' => 1])
             ->assertRedirect(route('checkout.index'));
 
         $this->get('/checkout')->assertOk()->assertSee('Penguin Keychain')->assertSee('Place order');
     }
 
-    public function test_guest_can_place_a_cash_on_delivery_order(): void
+    public function test_guests_must_log_in_before_placing_an_order(): void
     {
         $product = Product::where('slug', 'single-sunflower-stem')->first();
-        $this->keepSession()->postJson('/cart/add', ['product_id' => $product->id])->assertOk();
+        $this->keepSession()->postJson('/cart/add', ['product_id' => $product->id])->assertOk(); // browsing & cart stay open
+
+        $ordersBefore = Order::count();
+        $this->post('/checkout/place', [
+            'customer_name' => 'Guest', 'customer_phone' => '9800000000',
+            'line1' => 'Kalanki', 'city' => 'Kathmandu', 'payment_choice' => 'cod',
+        ])->assertRedirect(route('login'));
+        $this->assertSame($ordersBefore, Order::count());
+
+        // The normal path: cart → "Log in to checkout" → login page with a hint.
+        $this->get('/cart')->assertSee('Log in to checkout');
+        $this->get('/checkout')->assertRedirect(route('login'));
+        $this->get('/login')->assertSee('to place your order');
+
+        // Signing up returns them to checkout with their cart intact.
+        $this->post('/register', [
+            'name' => 'New Buyer', 'email' => 'buyer@example.com',
+            'password' => 'Secret-pass-123', 'password_confirmation' => 'Secret-pass-123',
+        ])->assertRedirect(route('checkout.index'));
+        $this->get('/checkout')->assertOk()->assertSee('Single Sunflower Stem');
+    }
+
+    public function test_logged_in_customer_can_place_a_cash_on_delivery_order(): void
+    {
+        $this->actingAs(User::factory()->create(['email' => 'buyer@example.com']));
+        $product = Product::where('slug', 'single-sunflower-stem')->first();
+        $this->postJson('/cart/add', ['product_id' => $product->id])->assertOk();
 
         $response = $this->post('/checkout/place', [
             'customer_name'  => 'Test Customer',
             'customer_phone' => '9800000000',
-            'customer_email' => 'guest@example.com',
+            'customer_email' => 'buyer@example.com',
             'line1'          => 'Kalanki',
             'city'           => 'Kathmandu',
             'province'       => 'Bagmati',
             'payment_choice' => 'cod',
         ]);
 
-        $order = Order::where('customer_email', 'guest@example.com')->firstOrFail();
+        $order = Order::where('customer_email', 'buyer@example.com')->firstOrFail();
         $response->assertRedirect(route('orders.confirmation', $order->order_number));
         $this->get(route('orders.confirmation', $order->order_number))->assertOk()->assertSee('Thank you for your order');
     }
 
     public function test_checkout_validates_required_fields(): void
     {
+        $this->actingAs(User::factory()->create());
         $product = Product::where('slug', 'single-sunflower-stem')->first();
-        $this->keepSession()->postJson('/cart/add', ['product_id' => $product->id])->assertOk();
+        $this->postJson('/cart/add', ['product_id' => $product->id])->assertOk();
 
         $this->from('/checkout')->post('/checkout/place', ['payment_choice' => 'cod'])
             ->assertRedirect('/checkout')

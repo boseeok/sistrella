@@ -5,6 +5,10 @@
     <h4 class="fw-bold mb-1">Welcome back</h4>
     <p class="text-muted small mb-4">Login to your account to continue.</p>
 
+    @if(str_contains((string) session('url.intended'), '/checkout'))
+        <div class="alert alert-info small"><i class="bi bi-bag-check me-1"></i>Please log in or <a href="{{ route('register') }}">create an account</a> to place your order. Your cart is saved.</div>
+    @endif
+
     <form action="{{ route('login') }}" method="POST">@csrf
         <div class="mb-3">
             <label class="form-label">Email</label>

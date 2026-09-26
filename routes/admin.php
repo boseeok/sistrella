@@ -139,6 +139,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin', 'demo.reado
         ->middleware('permission:settings.manage')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::put('/', 'update')->name('update');
+            Route::post('/whatsapp-test', 'testWhatsApp')->middleware('throttle:5,1')->name('whatsapp-test');
         });
 
     // Roles & permissions

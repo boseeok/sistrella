@@ -134,28 +134,6 @@
 </section>
 
 <div class="container">
-    {{-- Curated collections (Admin › Occasions & Collections, type "curated") --}}
-    @if(($curated ?? collect())->isNotEmpty())
-        <section class="section" aria-labelledby="curatedTitle">
-            <x-section-header title="Curated collections" eyebrow="Hand-picked" heading-id="curatedTitle" />
-            <div class="row g-3 g-md-4 row-cols-1 row-cols-md-{{ min(3, $curated->count()) }}">
-                @foreach($curated as $col)
-                    @php $cover = $col->image_url ?? $col->products->first()?->thumbnail; @endphp
-                    <div class="col">
-                        <a href="{{ route('collections.show', $col->slug) }}" class="curated-card">
-                            <span class="curated-media">@if($cover)<img src="{{ $cover }}" alt="" loading="lazy" width="600" height="400">@endif</span>
-                            <span class="curated-body">
-                                <span class="h5 d-block mb-1" style="font-family:var(--font-display)">{{ $col->name }}</span>
-                                @if($col->tagline)<span class="text-muted small d-block mb-2">{{ $col->tagline }}</span>@endif
-                                <span class="link-arrow small">Explore {{ $col->products_count }} {{ \Illuminate\Support\Str::plural('piece', $col->products_count) }} <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-                            </span>
-                        </a>
-                    </div>
-                @endforeach
-            </div>
-        </section>
-    @endif
-
     {{-- Flash sale --}}
     @if(($flashSale ?? collect())->isNotEmpty())
         <section class="section" aria-labelledby="railFlash-title">
@@ -241,12 +219,6 @@
     .occasion-tile:hover{border-color:var(--sage);transform:translateY(-3px);box-shadow:var(--shadow-sm);color:var(--ink);}
     .occasion-icon{width:56px;height:56px;border-radius:50%;background:var(--accent-soft);color:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
     .occasion-tile img{width:56px;height:56px;border-radius:50%;object-fit:cover;}
-    .curated-card{display:flex;flex-direction:column;height:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;color:var(--ink);transition:box-shadow .2s,transform .2s;}
-    .curated-card:hover{box-shadow:var(--shadow);transform:translateY(-3px);color:var(--ink);}
-    .curated-media{display:block;aspect-ratio:3/2;background:var(--sage-light);overflow:hidden;}
-    .curated-media img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
-    .curated-card:hover .curated-media img{transform:scale(1.05);}
-    .curated-body{display:block;padding:1rem 1.1rem 1.2rem;}
     .vp{display:flex;gap:.8rem;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.95rem 1rem;height:100%;}
     .vp i{font-size:1.45rem;color:var(--forest);width:44px;height:44px;border-radius:50%;background:var(--sage-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
     .vp strong{display:block;font-size:.9rem;} .vp span{font-size:.8rem;color:var(--muted);}
