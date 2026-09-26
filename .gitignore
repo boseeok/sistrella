@@ -24,4 +24,14 @@ Homestead.yaml
 Thumbs.db
 
 /storage/framework/views/*
+!/storage/framework/views/.gitignore
 /public/storage_old/
+
+# Database dumps / backups (contain real user data)
+*.sql
+*.sql.gz
+/storage/backups/
+*.sqlite
+
+# Local tooling / machine-specific
+/.claude/settings.local.json
