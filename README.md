@@ -252,7 +252,27 @@ cart's variant checks, custom gift requests). They run on in-memory SQLite with 
 
 ---
 
-## ☁️ Deploying to Railway
+## 🆓 Free live demo (Render)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/boseeok/sistrella)
+
+`render.yaml` + `Dockerfile` run a **self-contained demo** on Render's free plan: Apache + PHP 8.3,
+SQLite inside the container and the demo photos built into the image, so there is no database or
+disk to pay for. With `DEMO_MODE=true`:
+
+- the store is re-seeded on every start (free services sleep after ~15 minutes idle and wake on the
+  next visit in about a minute, so every visitor gets a clean demo);
+- a notice says it's a demo, and the login pages show demo credentials (the admin password is a
+  random value Render generates for `SEED_ADMIN_PASSWORD`);
+- the admin panel is **read-only** (`DEMO_ADMIN_READ_ONLY=true`): every screen can be browsed, but
+  nothing can be saved, uploaded or deleted.
+
+Deploy: Render → **New → Blueprint** → this repository (or the button above) → **Apply**. The first
+build takes a few minutes; the demo URL is `https://<service-name>.onrender.com`.
+
+---
+
+## ☁️ Deploying to Railway (paid, persistent data)
 
 The repo is ready for [Railway](https://railway.com) (Railpack builder, FrankenPHP, `public/` as web root):
 `railway.json` sets the builder and a `/up` health check, and `start-container.sh` runs migrations,

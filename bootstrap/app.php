@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             : route('login'));
 
         $middleware->alias([
+            'demo.readonly' => \App\Http\Middleware\DemoReadOnly::class,
             'admin'      => EnsureUserIsAdmin::class,
             'permission' => CheckPermission::class,
         ]);

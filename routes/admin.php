@@ -35,7 +35,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 | Admin panel (staff only)
 |--------------------------------------------------------------------------
 */
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin', 'demo.readonly'])->group(function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/chart/{type}', [DashboardController::class, 'chart'])->name('dashboard.chart');

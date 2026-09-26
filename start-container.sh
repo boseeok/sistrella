@@ -8,7 +8,9 @@ set -e
 
 if [ "$IS_LARAVEL" = "true" ]; then
   # Drop any config cached at build time so runtime variables are used.
-  php artisan optimize:clear
+  # (config:clear only deletes a file; optimize:clear would also clear the
+  # database cache table, which doesn't exist yet on a first deploy.)
+  php artisan config:clear
 
   if [ "$RAILPACK_SKIP_MIGRATIONS" != "true" ]; then
     echo "Running migrations ..."

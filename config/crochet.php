@@ -63,6 +63,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Public portfolio demo (Dockerfile / render.yaml)
+    |--------------------------------------------------------------------------
+    | enabled:         show the demo notice and login hints; the container
+    |                  rebuilds its SQLite demo database on every start.
+    | admin_read_only: block every change in the admin panel (visitors can
+    |                  browse all screens but not edit, upload or delete).
+    */
+    'demo' => [
+        'enabled'         => (bool) env('DEMO_MODE', false),
+        'admin_read_only' => (bool) env('DEMO_ADMIN_READ_ONLY', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Home page "custom orders" promo section (editable in Admin › Settings)
     |--------------------------------------------------------------------------
     | points: one bullet per line. image: public-disk path; empty = use the

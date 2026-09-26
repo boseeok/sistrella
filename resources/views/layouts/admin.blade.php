@@ -115,6 +115,9 @@
     </aside>
 
     <div class="content">
+        @if(config('crochet.demo.enabled') && config('crochet.demo.admin_read_only'))
+            <div class="alert alert-warning small py-2 mb-3" role="note"><i class="bi bi-eye me-1"></i>Read-only demo: browse every screen freely — saving, uploading and deleting are disabled.</div>
+        @endif
         <nav class="topbar d-flex align-items-center justify-content-between px-3 py-2 mb-4">
             <button class="btn btn-light d-lg-none" onclick="document.getElementById('adminSidebar').classList.add('show')"><i class="bi bi-list"></i></button>
             <h5 class="mb-0 fw-semibold">@yield('heading', 'Dashboard')</h5>

@@ -1,0 +1,27 @@
+# Never bake local secrets or machine state into the image.
+.env
+.env.*
+!.env.example
+.git
+.claude
+.idea
+.vscode
+
+vendor
+node_modules
+public/build
+public/hot
+public/storage
+public/storage_old
+
+storage/app/public/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*.php
+database/*.sqlite
+*.sql
+
+tests
+.phpunit.result.cache

@@ -1,0 +1,22 @@
+# Free live demo on Render: Dashboard → New → Blueprint → this repo (or the
+# "Deploy to Render" button in the README). Free web services sleep after
+# ~15 minutes without visitors and wake on the next visit (about a minute);
+# the demo store resets to fresh data each time it starts.
+services:
+  - type: web
+    name: sistrella-demo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /up
+    envVars:
+      - key: DEMO_MODE
+        value: "true"
+      # Visitors can browse the whole admin panel but not change anything.
+      - key: DEMO_ADMIN_READ_ONLY
+        value: "true"
+      # Random password for the demo staff accounts, shown on the demo's admin login page.
+      - key: SEED_ADMIN_PASSWORD
+        generateValue: true
+      - key: SESSION_SECURE_COOKIE
+        value: "true"

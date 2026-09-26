@@ -5,6 +5,13 @@
     <h4 class="fw-bold mb-1">Welcome back</h4>
     <p class="text-muted small mb-4">Login to your account to continue.</p>
 
+    @if(config('crochet.demo.enabled'))
+        <div class="demo-login mb-4">
+            <strong>Demo customer</strong><br>
+            Email: <code>aarati@example.com</code> · Password: <code>password</code>
+        </div>
+    @endif
+
     <form action="{{ route('login') }}" method="POST">@csrf
         <div class="mb-3">
             <label class="form-label">Email</label>

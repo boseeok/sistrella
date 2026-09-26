@@ -20,13 +20,22 @@
     <div class="card shadow-lg" style="width:100%;max-width:410px;">
         <div class="card-body p-4 p-md-5">
             <div class="text-center mb-4">
-                <img src="{{ asset('images/logo.png') }}" alt="{{ setting('store_name', 'Sistrella') }}" style="height:84px;width:auto;">
+                <img src="{{ asset('images/logo-header.png') }}" alt="{{ setting('store_name', 'Sistrella') }}" style="height:84px;width:auto;">
                 <h4 class="fw-bold mt-3 mb-0">Admin Panel</h4>
                 <p class="text-muted small">{{ setting('store_name', 'Crochet Store') }}</p>
             </div>
 
             @if($errors->any())
                 <div class="alert alert-danger small">{{ $errors->first() }}</div>
+            @endif
+
+            {{-- Public demo only (DEMO_MODE): the password is the demo's own generated one, never a real credential. --}}
+            @if(config('crochet.demo.enabled') && config('crochet.seed_admin_password'))
+                <div class="alert alert-info small">
+                    <strong>Demo login</strong>{{ config('crochet.demo.admin_read_only') ? ' (read-only)' : '' }}<br>
+                    Email: <code class="user-select-all">admin@crochetstore.test</code><br>
+                    Password: <code class="user-select-all">{{ config('crochet.seed_admin_password') }}</code>
+                </div>
             @endif
 
             <form action="{{ route('admin.login.submit') }}" method="POST">@csrf

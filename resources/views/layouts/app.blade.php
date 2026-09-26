@@ -38,6 +38,13 @@
 <body class="@yield('body_class')">
 <a href="#main" class="skip-link">Skip to content</a>
 
+@if(config('crochet.demo.enabled'))
+    <div class="demo-bar" role="note">
+        <i class="bi bi-info-circle me-1" aria-hidden="true"></i>Portfolio demo — orders aren’t real and the store resets automatically.
+        <a href="{{ route('admin.login') }}">Explore the admin panel</a>
+    </div>
+@endif
+
 <header class="site-header sticky-top">
     {{-- Announcement bar (content from store settings) --}}
     <div class="topbar">
