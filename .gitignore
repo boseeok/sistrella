@@ -34,4 +34,4 @@ Thumbs.db
 *.sqlite
 
 # Local tooling / machine-specific
-/.claude/settings.local.json
+/.claude/
