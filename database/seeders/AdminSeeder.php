@@ -59,8 +59,8 @@ class AdminSeeder extends Seeder
 
     private function password(): string
     {
-        if ($fromEnv = env('SEED_ADMIN_PASSWORD')) {
-            return $fromEnv;
+        if ($fromConfig = config('crochet.seed_admin_password')) {
+            return $fromConfig;
         }
 
         if (! app()->isProduction()) {

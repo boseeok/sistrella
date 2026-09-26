@@ -57,6 +57,10 @@ return [
         'rate' => (float) env('TAX_RATE', 0), // percentage, e.g. 13 for VAT
     ],
 
+    // Password for the seeded admin/manager/staff accounts (see AdminSeeder).
+    // Read through config so it still works when the config is cached.
+    'seed_admin_password' => env('SEED_ADMIN_PASSWORD'),
+
     /*
     |--------------------------------------------------------------------------
     | Home page "custom orders" promo section (editable in Admin › Settings)
