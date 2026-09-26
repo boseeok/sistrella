@@ -87,8 +87,6 @@
     /* Public demo notice (DEMO_MODE) */
     .demo-bar{background:var(--accent-soft);color:var(--ink);font-size:.82rem;text-align:center;padding:.45rem 1rem;}
     .demo-bar a{font-weight:700;text-decoration:underline;margin-left:.35rem;}
-    .demo-login{background:var(--brand-bg);border:1px dashed var(--sage);border-radius:var(--radius-sm);padding:.75rem 1rem;font-size:.85rem;}
-    .demo-login code{color:var(--ink);font-size:.85rem;user-select:all;}
 
     /* Announcement bar */
     .topbar{background:var(--forest);color:#F1EFE7;font-size:.8rem;overflow:hidden;}

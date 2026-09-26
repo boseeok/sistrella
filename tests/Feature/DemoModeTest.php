@@ -43,7 +43,7 @@ class DemoModeTest extends TestCase
         $this->enableDemo();
 
         $this->get('/')->assertOk()->assertSee('Portfolio demo');
-        $this->get('/login')->assertOk()->assertSee('aarati@example.com');
+        $this->get('/login')->assertOk()->assertDontSee('aarati@example.com'); // no customer hint
         $this->get('/admin/login')->assertOk()->assertSee('admin@crochetstore.test')->assertSee('demo-pass-123');
 
         $this->post(route('admin.login.submit'), ['email' => 'admin@crochetstore.test', 'password' => 'demo-pass-123'])

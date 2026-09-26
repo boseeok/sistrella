@@ -266,8 +266,8 @@ disk to pay for. With `DEMO_MODE=true`:
 
 - the store is re-seeded on every start (free services sleep after ~15 minutes idle and wake on the
   next visit in about a minute, so every visitor gets a clean demo);
-- a notice says it's a demo, and the login pages show the demo credentials
-  (admin: `admin@crochetstore.test` / `password`, customer: `aarati@example.com` / `password`);
+- a notice says it's a demo, and the admin login page shows the demo credentials
+  (`admin@crochetstore.test` / `password`);
 - the admin panel is **read-only** (`DEMO_ADMIN_READ_ONLY=true`): every screen can be browsed, but
   nothing can be saved, uploaded or deleted.
 
