@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class ProductImage extends Model
 {
@@ -18,6 +19,10 @@ class ProductImage extends Model
 
     public function getUrlAttribute(): string
     {
+        if (Str::startsWith($this->path, ['http://', 'https://'])) {
+            return $this->path;
+        }
+
         return asset('storage/'.$this->path);
     }
 }

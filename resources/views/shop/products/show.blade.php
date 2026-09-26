@@ -25,7 +25,7 @@
         <div class="col-md-6">
             <div class="card p-2">
                 <div class="zoom-wrap">
-                    <img id="mainImage" src="{{ $product->thumbnail }}" alt="{{ $product->name }}" class="zoom-img img-fluid rounded-3 w-100" style="aspect-ratio:1/1;object-fit:cover;background:#DCE3CE">
+                    <img id="mainImage" src="{{ $product->thumbnail }}" alt="{{ $product->name }}" class="zoom-img img-fluid rounded-3 w-100" style="aspect-ratio:1/1;object-fit:cover;object-position:center;background:#DCE3CE;height:100%">
                     <div class="zoom-controls">
                         <button type="button" id="zoomIn" title="Zoom in"><i class="bi bi-plus-lg"></i></button>
                         <button type="button" id="zoomOut" title="Zoom out"><i class="bi bi-dash-lg"></i></button>
@@ -36,7 +36,7 @@
             @if($gallery->count() > 1)
                 <div class="d-flex gap-2 mt-2 overflow-auto">
                     @foreach($gallery as $img)
-                        <img src="{{ asset('storage/'.$img->path) }}" class="thumb-img rounded-2 border" style="width:72px;height:72px;object-fit:cover;cursor:pointer" onclick="document.getElementById('mainImage').src=this.src">
+                        <img src="{{ Str::startsWith($img->path, ['http://', 'https://']) ? $img->path : asset('storage/'.$img->path) }}" class="thumb-img rounded-2 border" style="width:72px;height:72px;object-fit:cover;object-position:center;cursor:pointer" onclick="document.getElementById('mainImage').src=this.src">
                     @endforeach
                 </div>
             @endif

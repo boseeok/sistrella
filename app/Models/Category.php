@@ -68,6 +68,10 @@ class Category extends Model
 
     public function getImageUrlAttribute(): string
     {
+        if ($this->image && Str::startsWith($this->image, ['http://', 'https://'])) {
+            return $this->image;
+        }
+
         return $this->image
             ? asset('storage/'.$this->image)
             : 'https://placehold.co/400x300/CCFBF1/0D9488?text='.urlencode($this->name);

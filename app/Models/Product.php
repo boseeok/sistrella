@@ -235,9 +235,13 @@ class Product extends Model
         $img = $this->relationLoaded('primaryImage') ? $this->primaryImage : $this->primaryImage()->first();
         $img = $img ?: ($this->relationLoaded('images') ? $this->images->first() : $this->images()->first());
 
-        return $img
-            ? asset('storage/'.$img->path)
-            : $this->placeholderImage();
+        if (! $img) {
+            return $this->placeholderImage();
+        }
+
+        return Str::startsWith($img->path, ['http://', 'https://'])
+            ? $img->path
+            : asset('storage/'.$img->path);
     }
 
     /**

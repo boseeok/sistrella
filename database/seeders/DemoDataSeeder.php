@@ -13,6 +13,7 @@ use App\Models\Review;
 use App\Models\User;
 use App\Services\OrderService;
 use App\Services\PrepaymentService;
+use Database\Seeders\Concerns\FetchesStockImages;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -24,6 +25,8 @@ use Illuminate\Support\Str;
  */
 class DemoDataSeeder extends Seeder
 {
+    use FetchesStockImages;
+
     public function __construct(private readonly PrepaymentService $prepayment)
     {
     }
@@ -124,7 +127,7 @@ class DemoDataSeeder extends Seeder
     {
         Banner::updateOrCreate(['title' => 'Handmade Crochet, Made with Love'], [
             'subtitle'    => 'Discover unique amigurumi, wearables & home decor',
-            'image'       => '',
+            'image'       => $this->stockImage('unsplash:1700171394718-2457b1190444', 'banners/stock'),
             'link'        => '/shop',
             'button_text' => 'Shop Now',
             'position'    => 'hero',
@@ -134,7 +137,7 @@ class DemoDataSeeder extends Seeder
 
         Banner::updateOrCreate(['title' => 'Flash Sale Live Now'], [
             'subtitle'    => 'Up to 20% off selected handmade pieces',
-            'image'       => '',
+            'image'       => $this->stockImage('pexels:38718822', 'banners/stock'),
             'link'        => '/shop?sort=popular',
             'button_text' => 'Grab the Deal',
             'position'    => 'hero',

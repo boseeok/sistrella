@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Banner extends Model
 {
@@ -21,6 +22,10 @@ class Banner extends Model
 
     public function getImageUrlAttribute(): string
     {
+        if ($this->image && Str::startsWith($this->image, ['http://', 'https://'])) {
+            return $this->image;
+        }
+
         return $this->image
             ? asset('storage/'.$this->image)
             : 'https://placehold.co/1600x600/0D9488/ffffff?text='.urlencode($this->title ?? 'Crochet Store');

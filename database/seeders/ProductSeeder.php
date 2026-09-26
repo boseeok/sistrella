@@ -4,17 +4,59 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Product;
+use Database\Seeders\Concerns\FetchesStockImages;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 /**
  * Seeds a catalogue of demo crochet products spread across the seeded
  * categories, with a realistic mix of flags (featured / trending / best
- * seller / new arrival) and a few live flash sales. Product images are left
- * empty on purpose so the Product::thumbnail placeholder renders nicely.
+ * seller / new arrival) and a few live flash sales. Each product gets 1-3
+ * real crochet photos (Unsplash / Pexels / Pixabay, free licences) that are
+ * downloaded into storage/app/public/products/stock on first seed.
  */
 class ProductSeeder extends Seeder
 {
+    use FetchesStockImages;
+
+    /**
+     * product name => stock photo refs (first one is the primary image)
+     */
+    private array $photos = [
+        // Amigurumi
+        'Cuddly Bear Amigurumi'       => ['unsplash:1602773974733-b56200c8653f', 'unsplash:1626241803094-88edd8ae6453', 'pixabay:2016/09/11/20/50/giraffe-1662561'],
+        'Tiny Bunny Plush'            => ['unsplash:1744371760034-fb60ebd2b198', 'unsplash:1629019317873-3f603b269723', 'unsplash:1775484105281-a5e677f2ae40'],
+        'Crochet Octopus'             => ['pexels:38745727', 'pexels:38914365'],
+        'Mini Dinosaur Set'           => ['pexels:38972275', 'unsplash:1766090503766-623b62f0da26', 'pexels:38718822'],
+        'Sleepy Cat Doll'             => ['pixabay:2017/03/13/12/52/crochet-doll-2139663', 'unsplash:1686151573986-03b5a79f22a5', 'pixabay:2016/09/11/20/57/pablo-mouse-1662574'],
+        'Penguin Keychain'            => ['unsplash:1753370474663-1b0ad622c5fc', 'unsplash:1753370474846-afc7a13defc4'],
+        // Wearables
+        'Chunky Knit Beanie'          => ['unsplash:1603321581635-d46915755425', 'unsplash:1723856001946-3b53c9fe3bc9'],
+        'Striped Winter Scarf'        => ['unsplash:1457545195570-67f207084966', 'unsplash:1539215398023-f3ac3405795f'],
+        'Cozy Cardigan Sweater'       => ['unsplash:1679847628912-4c3e7402abc7', 'unsplash:1627667539472-75fbc7f4654d'],
+        'Baby Booties Set'            => ['unsplash:1771046749660-9e73020a142d'],
+        'Slouchy Wool Hat'            => ['unsplash:1777898218954-26f1f27f2064', 'unsplash:1777898277718-61e4945f8e6c'],
+        // Home decor
+        'Boho Plant Hanger'           => ['unsplash:1671212684942-5c8a3dc3234e', 'unsplash:1783943579121-da2fab12bbf9'],
+        'Round Coaster Set (4)'       => ['unsplash:1502245610427-c7abdffde91b', 'pexels:5264802'],
+        'Macrame Wall Hanging'        => ['unsplash:1786309777642-e205058ad298', 'unsplash:1753370241593-9cc8c17d7434'],
+        'Granny Square Cushion Cover' => ['unsplash:1728393287642-13bee7126ae8', 'unsplash:1693387359607-f48d0a824b1e'],
+        'Mandala Table Mat'           => ['unsplash:1780984901511-7a1be4f014fb', 'pixabay:2023/08/20/17/00/crochet-8202792'],
+        // Bags & pouches
+        'Crochet Tote Bag'            => ['unsplash:1594638963668-52eb9798e8ca', 'unsplash:1565592284032-d3c08f2a53e9'],
+        'Floral Coin Pouch'           => ['unsplash:1787432131008-c754654978a4'],
+        'Market Mesh Bag'             => ['unsplash:1686285961020-4c46c9f3f7a6', 'unsplash:1629736329185-086161cda231'],
+        'Mini Crossbody Bag'          => ['pexels:10820408', 'pexels:10820406'],
+        // Flowers & bouquets
+        'Eternal Rose Bouquet'        => ['unsplash:1700171458554-46cfd3f2a87a', 'unsplash:1700171518313-5dd219beaaa6', 'unsplash:1700171394718-2457b1190444'],
+        'Single Sunflower Stem'       => ['unsplash:1753366556699-4be495e5bdd6', 'unsplash:1700170447159-9d2d0da133a5'],
+        'Tulip Trio'                  => ['unsplash:1768029120664-119e99b02e5b', 'unsplash:1789673571128-27a53c083ead'],
+        // Accessories
+        'Crochet Hair Scrunchie'      => ['unsplash:1636039805398-1934cad278dc', 'pixabay:2016/09/11/20/44/vintage-1662542'],
+        'Beaded Bookmark'             => ['pexels:14186003'],
+        'Flower Brooch Pin'           => ['unsplash:1700170928599-d7fc2d4ec97f', 'unsplash:1784368611050-ebe6372b7af9'],
+    ];
+
     /**
      * category-slug => [ [name, price, compareAt, stock, flags...], ... ]
      * flags: f=featured t=trending b=best_seller n=new_arrival s=flash_sale c=customizable
@@ -73,7 +115,7 @@ class ProductSeeder extends Seeder
             foreach ($items as [$name, $price, $compareAt, $stock, $flags]) {
                 $flash = str_contains($flags, 's');
 
-                Product::updateOrCreate(
+                $product = Product::updateOrCreate(
                     ['slug' => Str::slug($name)],
                     [
                         'category_id'          => $category->id,
@@ -101,6 +143,16 @@ class ProductSeeder extends Seeder
                         'weight'               => rand(80, 600),
                     ],
                 );
+
+                $product->images()->delete();
+                foreach ($this->photos[$name] ?? [] as $index => $ref) {
+                    $product->images()->create([
+                        'path' => $this->stockImage($ref),
+                        'alt' => "{$name} handmade crochet item",
+                        'is_primary' => $index === 0,
+                        'sort_order' => $index,
+                    ]);
+                }
             }
         }
     }

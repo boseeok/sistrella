@@ -53,7 +53,7 @@
     .card{border:none;border-radius:1rem;background:#fff;box-shadow:0 4px 18px rgba(47,58,42,.08);}
     .product-card{transition:transform .15s ease,box-shadow .15s ease;overflow:hidden;height:100%;}
     .product-card:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(47,58,42,.16);}
-    .product-card .pimg{aspect-ratio:1/1;object-fit:cover;width:100%;background:var(--sage-light);}
+    .product-card .pimg{display:block;aspect-ratio:1/1;width:100%;height:100%;object-fit:cover;object-position:center;background:var(--sage-light);}
     .badge-sale{background:var(--terracotta);color:#fff;font-weight:700;}
     .hero{background:linear-gradient(120deg,var(--sage-light),var(--brand-bg) 55%,var(--cream));border-radius:1.5rem;}
     .section-title{font-family:'Quicksand',sans-serif;font-weight:700;color:var(--forest);}
