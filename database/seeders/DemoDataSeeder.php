@@ -145,10 +145,16 @@ class DemoDataSeeder extends Seeder
             'sort_order'  => 1,
         ]);
 
-        foreach (['Free WhatsApp Support', 'Custom Orders Welcome', 'Cash on Delivery Available'] as $n => $title) {
+        $promos = [
+            'Free WhatsApp Support'      => 'unsplash:1728393287642-13bee7126ae8',
+            'Custom Orders Welcome'      => 'unsplash:1777898218954-26f1f27f2064',
+            'Cash on Delivery Available' => 'unsplash:1700171458554-46cfd3f2a87a',
+        ];
+
+        foreach (array_keys($promos) as $n => $title) {
             Banner::updateOrCreate(['title' => $title], [
                 'subtitle'   => 'Tap to learn more',
-                'image'      => '',
+                'image'      => $this->stockImage($promos[$title], 'banners/stock'),
                 'link'       => $n === 1 ? '/custom-order' : '/about',
                 'position'   => 'promo',
                 'is_active'  => true,

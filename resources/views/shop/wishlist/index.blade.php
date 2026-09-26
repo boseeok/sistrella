@@ -18,7 +18,7 @@
                     @foreach($items as $item)
                         @continue(!$item->product)
                         @php $product = $item->product; @endphp
-                        <div class="col-6 col-md-4">@include('partials.product-card')</div>
+                        <div class="col-6 col-md-4"><x-product-card :product="$product" /></div>
                     @endforeach
                 </div>
             @endif

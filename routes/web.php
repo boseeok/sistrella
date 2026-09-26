@@ -24,6 +24,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [ProductController::class, 'index'])->name('shop');
 Route::get('/search', [ProductController::class, 'search'])->name('search');
 Route::get('/category/{category:slug}', [ProductController::class, 'category'])->name('categories.show');
+Route::get('/collections/{collection:slug}', [ProductController::class, 'collection'])->name('collections.show');
 Route::get('/product/{product:slug}', [ProductController::class, 'show'])->name('products.show');
 Route::post('/product/{product:slug}/review', [ProductController::class, 'review'])
     ->middleware('auth')->name('products.review');
@@ -73,6 +74,7 @@ Route::controller(CustomRequestController::class)->prefix('custom-order')->name(
 });
 
 // Static pages, contact, newsletter
+Route::get('/sitemap.xml', [PageController::class, 'sitemap'])->name('sitemap');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'submitContact'])->name('contact.submit');

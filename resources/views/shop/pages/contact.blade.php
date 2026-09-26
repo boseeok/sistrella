@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="container" style="max-width:960px">
-    <h2 class="section-title mb-4 text-center">Get in Touch</h2>
+    <h1 class="section-title h2 mb-4 text-center">Get in touch</h1>
     <div class="row g-4">
         <div class="col-lg-5">
             <div class="card p-4 h-100">

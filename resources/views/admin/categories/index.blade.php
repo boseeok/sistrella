@@ -12,7 +12,7 @@
                 @forelse($categories as $c)
                     <tr>
                         <td><i class="bi {{ $c->icon ?: 'bi-tag' }} me-1 text-brand"></i>{{ $c->name }}</td>
-                        <td class="small text-muted">{{ $c->parent->name ?? '—' }}</td>
+                        <td class="small text-muted">{{ $c->parent?->path_name ?? '—' }}</td>
                         <td>{{ $c->products_count }}</td>
                         <td>{!! $c->is_featured ? '<i class="bi bi-star-fill text-warning"></i>' : '—' !!}</td>
                         <td>{!! $c->is_active ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Hidden</span>' !!}</td>

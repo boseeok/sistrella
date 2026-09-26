@@ -3,9 +3,10 @@
 
 @section('content')
 <div class="container" style="max-width:760px">
+    <x-checkout-steps :current="3" />
     <div class="card p-4 p-md-5 text-center mb-4">
         <i class="bi bi-check-circle-fill text-success" style="font-size:3.5rem"></i>
-        <h2 class="section-title mt-3">Thank you for your order!</h2>
+        <h1 class="section-title h2 mt-3">Thank you for your order!</h1>
         <p class="text-muted">Your order <strong>{{ $order->order_number }}</strong> has been placed.</p>
 
         @if($order->requires_prepayment && $order->amount_paid < $order->advance_amount)

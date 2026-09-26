@@ -89,6 +89,8 @@
             <a href="{{ route('admin.coupons.index') }}" class="{{ $is('admin.coupons.*') }}"><i class="bi bi-ticket-perforated"></i> Coupons</a>
         @endif
         @if($u->hasPermission('marketing.manage'))
+            <a href="{{ route('admin.collections.index') }}" class="{{ $is('admin.collections.*') }}"><i class="bi bi-balloon-heart"></i> Occasions &amp; Collections</a>
+            <a href="{{ route('admin.homepage.edit') }}" class="{{ $is('admin.homepage.*') }}"><i class="bi bi-file-richtext"></i> Page Content</a>
             <a href="{{ route('admin.banners.index') }}" class="{{ $is('admin.banners.*') }}"><i class="bi bi-images"></i> Banners</a>
             <a href="{{ route('admin.marketing.index') }}" class="{{ $is('admin.marketing.*') }}"><i class="bi bi-megaphone"></i> Newsletter & Messages</a>
         @endif

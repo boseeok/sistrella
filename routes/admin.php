@@ -70,6 +70,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Catalogue
     Route::resource('products', ProductController::class)->middleware('permission:products.manage');
+    Route::controller(ProductController::class)->prefix('products/{product}/images/{image}')
+        ->name('products.images.')->middleware('permission:products.manage')->scopeBindings()->group(function () {
+            Route::patch('/primary', 'makePrimaryImage')->name('primary');
+            Route::delete('/', 'destroyImage')->name('destroy');
+        });
     Route::resource('categories', CategoryController::class)->middleware('permission:categories.manage');
     Route::resource('coupons', CouponController::class)->middleware('permission:coupons.manage');
     Route::resource('banners', BannerController::class)->middleware('permission:marketing.manage');
@@ -116,6 +121,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
             Route::get('/subscribers', 'subscribers')->name('subscribers');
             Route::get('/messages', 'messages')->name('messages');
             Route::patch('/messages/{message}/read', 'markRead')->name('messages.read');
+        });
+
+    // Occasions & curated collections
+    Route::resource('collections', \App\Http\Controllers\Admin\CollectionController::class)->middleware('permission:marketing.manage');
+
+    // Home page content (storefront sections)
+    Route::controller(\App\Http\Controllers\Admin\HomepageController::class)->prefix('homepage')->name('homepage.')
+        ->middleware('permission:marketing.manage')->group(function () {
+            Route::get('/', 'edit')->name('edit');
+            Route::put('/', 'update')->name('update');
+            Route::put('/about', 'updateAbout')->name('about');
         });
 
     // Settings

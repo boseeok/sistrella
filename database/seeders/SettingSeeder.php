@@ -46,7 +46,7 @@ class SettingSeeder extends Seeder
         'low_stock_threshold' => ['5', 'integer', 'inventory'],
 
         // Contact / social
-        'whatsapp_number' => ['+977 9803404215', 'string', 'social'],
+        'whatsapp_number' => ['+977 9761612457', 'string', 'social'],
         'instagram_url'   => ['https://instagram.com/crochetstore', 'string', 'social'],
         'facebook_url'    => ['https://facebook.com/crochetstore', 'string', 'social'],
         'tiktok_url'      => ['', 'string', 'social'],

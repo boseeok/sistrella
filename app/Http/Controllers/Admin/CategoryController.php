@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
@@ -13,14 +15,14 @@ class CategoryController extends Controller
     public function index(): View
     {
         return view('admin.categories.index', [
-            'categories' => Category::with('parent')->withCount('products')->orderBy('sort_order')->paginate(30),
+            'categories' => Category::with('parent.parent')->withCount('products')->orderBy('parent_id')->orderBy('sort_order')->paginate(40),
         ]);
     }
 
     public function create(): View
     {
         return view('admin.categories.create', [
-            'parents' => Category::roots()->orderBy('name')->get(),
+            'parents' => $this->parentOptions(),
         ]);
     }
 
@@ -35,7 +37,7 @@ class CategoryController extends Controller
     {
         return view('admin.categories.edit', [
             'category' => $category,
-            'parents'  => Category::roots()->where('id', '!=', $category->id)->orderBy('name')->get(),
+            'parents'  => $this->parentOptions($category),
         ]);
     }
 
@@ -57,7 +59,8 @@ class CategoryController extends Controller
     {
         $data = $request->validate([
             'name'        => ['required', 'string', 'max:255'],
-            'parent_id'   => ['nullable', 'exists:categories,id'],
+            // Any depth is allowed, but never under itself or one of its own sub-categories.
+            'parent_id'   => ['nullable', 'exists:categories,id', Rule::notIn($category ? $category->descendantAndSelfIds() : [])],
             'description' => ['nullable', 'string', 'max:1000'],
             'icon'        => ['nullable', 'string', 'max:60'],
             'sort_order'  => ['nullable', 'integer', 'min:0'],
@@ -77,5 +80,16 @@ class CategoryController extends Controller
         }
 
         return $data;
+    }
+
+    /**
+     * Every category except the one being edited and its descendants,
+     * labelled with its full path ("Crochet › Amigurumi").
+     */
+    private function parentOptions(?Category $category = null): Collection
+    {
+        $exclude = $category ? $category->descendantAndSelfIds() : [];
+
+        return Category::with('parent.parent')->whereNotIn('id', $exclude)->get()->sortBy('path_name')->values();
     }
 }

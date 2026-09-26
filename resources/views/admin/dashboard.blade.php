@@ -78,7 +78,27 @@
         </div>
     </div>
     <div class="col-lg-5">
-        <div class="card p-3 h-100">
+        {{-- Revenue & catalogue per product line (top-level category) --}}
+        <div class="card p-3 mb-3">
+            <h6 class="fw-bold mb-3">Product Lines</h6>
+            @php $maxRevenue = max(1, $productLines->max('revenue')); @endphp
+            @forelse($productLines as $line)
+                <div class="py-2 border-bottom small">
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ route('categories.show', $line['slug']) }}" target="_blank" class="fw-semibold text-dark text-decoration-none">{{ $line['name'] }}</a>
+                        <span class="fw-semibold">{{ money($line['revenue'], false) }}</span>
+                    </div>
+                    <div class="progress my-1" style="height:6px" role="progressbar" aria-label="{{ $line['name'] }} share of revenue">
+                        <div class="progress-bar bg-success" style="width: {{ round($line['revenue'] / $maxRevenue * 100) }}%"></div>
+                    </div>
+                    <div class="text-muted">{{ $line['units'] }} sold · {{ $line['products'] }} products · {{ $line['stock'] }} in stock</div>
+                </div>
+            @empty
+                <p class="text-muted small mb-0">No categories yet.</p>
+            @endforelse
+        </div>
+
+        <div class="card p-3">
             <h6 class="fw-bold mb-3">Low Stock Alert</h6>
             @forelse($lowStock as $p)
                 <div class="d-flex justify-content-between py-2 border-bottom small">

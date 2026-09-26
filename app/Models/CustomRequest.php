@@ -11,7 +11,8 @@ class CustomRequest extends Model
     protected $fillable = [
         'request_number', 'user_id',
         'customer_name', 'customer_email', 'customer_phone',
-        'title', 'notes', 'color', 'size', 'quantity', 'preferred_delivery_date',
+        'title', 'category_id', 'collection_id', 'budget',
+        'notes', 'color', 'size', 'quantity', 'preferred_delivery_date',
         'quoted_price', 'quote_note', 'quoted_at', 'order_id',
         'status', 'admin_notes',
     ];
@@ -52,6 +53,18 @@ class CustomRequest extends Model
     public function images(): HasMany
     {
         return $this->hasMany(CustomRequestImage::class);
+    }
+
+    /** Product line the request is for (Crochet, Ribbon Bouquets…). */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /** Occasion the gift is for. */
+    public function occasion(): BelongsTo
+    {
+        return $this->belongsTo(ProductCollection::class, 'collection_id');
     }
 
     public function order(): BelongsTo

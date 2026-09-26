@@ -16,6 +16,9 @@
                 <div class="col-6"><span class="text-muted">Customer:</span> {{ $request->customer_name }}</div>
                 <div class="col-6"><span class="text-muted">Phone:</span> {{ $request->customer_phone }}</div>
                 <div class="col-6"><span class="text-muted">Email:</span> {{ $request->customer_email ?: '—' }}</div>
+                <div class="col-6"><span class="text-muted">Gift type:</span> {{ $request->category?->name ?? '—' }}</div>
+                <div class="col-6"><span class="text-muted">Occasion:</span> {{ $request->occasion?->name ?? '—' }}</div>
+                <div class="col-6"><span class="text-muted">Budget:</span> {{ $request->budget ? money($request->budget) : '—' }}</div>
                 <div class="col-6"><span class="text-muted">Quantity:</span> {{ $request->quantity }}</div>
                 <div class="col-6"><span class="text-muted">Color:</span> {{ $request->color ?: '—' }}</div>
                 <div class="col-6"><span class="text-muted">Size:</span> {{ $request->size ?: '—' }}</div>

@@ -5,15 +5,24 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductCollection;
+use App\Models\ProductImage;
+use App\Models\ProductVariant;
 use App\Services\ActivityLogger;
+use App\Services\ProductVariantService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function __construct(private readonly ActivityLogger $logger)
-    {
+    public function __construct(
+        private readonly ActivityLogger $logger,
+        private readonly ProductVariantService $variants,
+    ) {
     }
 
     public function index(Request $request): View
@@ -34,7 +43,7 @@ class ProductController extends Controller
 
         return view('admin.products.index', [
             'products'   => $query->paginate(20)->withQueryString(),
-            'categories' => Category::orderBy('name')->get(),
+            'categories' => Category::with('parent')->orderBy('name')->get(),
             'filters'    => $request->only(['search', 'category_id', 'status']),
         ]);
     }
@@ -42,7 +51,8 @@ class ProductController extends Controller
     public function create(): View
     {
         return view('admin.products.create', [
-            'categories' => Category::orderBy('name')->get(),
+            'categories'  => Category::with('parent.parent')->orderBy('name')->get(),
+            'collections' => ProductCollection::ordered()->get(),
         ]);
     }
 
@@ -52,6 +62,7 @@ class ProductController extends Controller
 
         $product = Product::create($data);
         $this->syncImages($product, $request);
+        $this->syncExtras($product, $request);
         $this->logger->log('product.created', "Created product {$product->name}", $product);
 
         return redirect()->route('admin.products.edit', $product)->with('success', 'Product created.');
@@ -65,8 +76,9 @@ class ProductController extends Controller
     public function edit(Product $product): View
     {
         return view('admin.products.edit', [
-            'product'    => $product->load('images'),
-            'categories' => Category::orderBy('name')->get(),
+            'product'     => $product->load(['images', 'collections', 'variants.attributeValues.attribute']),
+            'categories'  => Category::with('parent.parent')->orderBy('name')->get(),
+            'collections' => ProductCollection::ordered()->get(),
         ]);
     }
 
@@ -76,6 +88,7 @@ class ProductController extends Controller
 
         $product->update($data);
         $this->syncImages($product, $request);
+        $this->syncExtras($product, $request);
         $this->logger->log('product.updated', "Updated product {$product->name}", $product);
 
         return back()->with('success', 'Product updated.');
@@ -87,6 +100,46 @@ class ProductController extends Controller
         $this->logger->log('product.deleted', "Deleted product {$product->name}", $product);
 
         return redirect()->route('admin.products.index')->with('success', 'Product deleted.');
+    }
+
+    /**
+     * Occasion tags and colour/size variants (validated in validateProduct).
+     */
+    private function syncExtras(Product $product, Request $request): void
+    {
+        if ($request->has('collections_present')) {
+            $product->collections()->sync($request->input('collection_ids', []));
+        }
+
+        if ($request->has('variants_present')) {
+            $this->variants->sync($product, $request->input('variants', []));
+        }
+    }
+
+    public function makePrimaryImage(Product $product, ProductImage $image): RedirectResponse
+    {
+        $product->images()->whereKeyNot($image->getKey())->update(['is_primary' => false]);
+        $image->forceFill(['is_primary' => true])->save();
+
+        return back()->with('success', 'Primary image updated.');
+    }
+
+    public function destroyImage(Product $product, ProductImage $image): RedirectResponse
+    {
+        $image->delete();
+
+        // Remove the uploaded file unless another record still uses it
+        // (seeded stock photos are shared between products/categories).
+        if (! Str::startsWith($image->path, ['http://', 'https://'])
+            && ! ProductImage::where('path', $image->path)->exists()) {
+            Storage::disk('public')->delete($image->path);
+        }
+
+        if ($image->is_primary) {
+            $product->images()->orderBy('sort_order')->first()?->update(['is_primary' => true]);
+        }
+
+        return back()->with('success', 'Image removed.');
     }
 
     private function validateProduct(Request $request, ?Product $product = null): array
@@ -116,7 +169,28 @@ class ProductController extends Controller
             'weight'               => ['nullable', 'numeric', 'min:0'],
             'meta_title'           => ['nullable', 'string', 'max:255'],
             'meta_description'     => ['nullable', 'string', 'max:255'],
+            // Occasions / collections
+            'collection_ids'       => ['nullable', 'array'],
+            'collection_ids.*'     => ['integer', 'exists:collections,id'],
+            // Colour / size variants
+            'variants'               => ['nullable', 'array', 'max:60'],
+            'variants.*.id'          => ['nullable', 'integer'],
+            'variants.*.color'       => ['nullable', 'string', 'max:40'],
+            'variants.*.color_code'  => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'variants.*.size'        => ['nullable', 'string', 'max:40'],
+            'variants.*.price'       => ['nullable', 'numeric', 'min:0'],
+            'variants.*.stock'       => ['nullable', 'integer', 'min:0'],
+            'variants.*.sku'         => ['nullable', 'string', 'max:60', 'distinct'],
         ]);
+
+        // Variant SKUs must be unique across the catalogue.
+        foreach ($request->input('variants', []) as $i => $row) {
+            if (filled($row['sku'] ?? null) && empty($row['_delete'])
+                && ProductVariant::where('sku', $row['sku'])->whereKeyNot($row['id'] ?? 0)->exists()) {
+                throw ValidationException::withMessages(["variants.{$i}.sku" => "SKU {$row['sku']} is already used by another variant."]);
+            }
+        }
+        unset($data['collection_ids'], $data['variants']);
 
         foreach (['track_inventory', 'is_active', 'is_featured', 'is_trending', 'is_best_seller', 'is_new_arrival', 'is_customizable'] as $flag) {
             $data[$flag] = $request->boolean($flag);
@@ -139,7 +213,7 @@ class ProductController extends Controller
             return;
         }
 
-        $request->validate(['images.*' => ['image', 'max:4096']]);
+        $request->validate(['images.*' => ['image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096']]);
 
         $hasPrimary = $product->images()->where('is_primary', true)->exists();
 

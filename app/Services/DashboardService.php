@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Category;
 use App\Models\CustomRequest;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Carbon;
@@ -63,7 +65,7 @@ class DashboardService
     {
         $rows = Order::whereIn('status', self::REVENUE_STATUSES)
             ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as m, SUM(grand_total) as total")
+            ->selectRaw($this->monthExpression().' as m, SUM(grand_total) as total')
             ->groupBy('m')->pluck('total', 'm');
 
         $labels = [];
@@ -83,7 +85,7 @@ class DashboardService
     public function customerGrowth(): array
     {
         $rows = User::where('created_at', '>=', now()->subMonths(11)->startOfMonth())
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as m, COUNT(*) as cnt")
+            ->selectRaw($this->monthExpression().' as m, COUNT(*) as cnt')
             ->groupBy('m')->pluck('cnt', 'm');
 
         $labels = [];
@@ -115,5 +117,65 @@ class DashboardService
     public function verificationQueue(int $limit = 8)
     {
         return Order::awaitingVerification()->with('payments')->latest()->limit($limit)->get();
+    }
+
+    /**
+     * Revenue, units sold, live products and stock per product line
+     * (top-level category: Crochet, Ribbon Bouquets, Fuzzy Wire…). New
+     * top-level categories appear here automatically.
+     *
+     * @return \Illuminate\Support\Collection<int, array{name:string, slug:string, revenue:float, units:int, products:int, stock:int}>
+     */
+    public function productLines(): \Illuminate\Support\Collection
+    {
+        $categories = Category::all(['id', 'parent_id', 'name', 'slug'])->keyBy('id');
+        $rootOf = function (?int $id) use ($categories) {
+            for ($c = $categories[$id] ?? null; $c && $c->parent_id; $c = $categories[$c->parent_id] ?? null);
+
+            return $c;
+        };
+
+        $sales = OrderItem::query()
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->join('products', 'products.id', '=', 'order_items.product_id')
+            ->whereIn('orders.status', self::REVENUE_STATUSES)
+            ->groupBy('products.category_id')
+            ->selectRaw('products.category_id, SUM(order_items.line_total) as revenue, SUM(order_items.quantity) as units')
+            ->get();
+
+        $catalogue = Product::active()->groupBy('category_id')
+            ->selectRaw('category_id, COUNT(*) as products, SUM(stock) as stock')->get();
+
+        $lines = $categories->whereNull('parent_id')->sortBy('name')->mapWithKeys(fn ($root) => [$root->id => [
+            'name' => $root->name, 'slug' => $root->slug, 'revenue' => 0.0, 'units' => 0, 'products' => 0, 'stock' => 0,
+        ]])->all();
+
+        foreach ($sales as $row) {
+            if ($root = $rootOf($row->category_id)) {
+                $lines[$root->id]['revenue'] += (float) $row->revenue;
+                $lines[$root->id]['units']   += (int) $row->units;
+            }
+        }
+        foreach ($catalogue as $row) {
+            if ($root = $rootOf($row->category_id)) {
+                $lines[$root->id]['products'] += (int) $row->products;
+                $lines[$root->id]['stock']    += (int) $row->stock;
+            }
+        }
+
+        return collect($lines)->sortByDesc('revenue')->values();
+    }
+
+    /**
+     * "YYYY-MM" of created_at in the current database's SQL dialect
+     * (MySQL/MariaDB in production, SQLite for tests and local previews).
+     */
+    private function monthExpression(): string
+    {
+        return match (DB::connection()->getDriverName()) {
+            'sqlite' => "strftime('%Y-%m', created_at)",
+            'pgsql'  => "to_char(created_at, 'YYYY-MM')",
+            default  => "DATE_FORMAT(created_at, '%Y-%m')",
+        };
     }
 }

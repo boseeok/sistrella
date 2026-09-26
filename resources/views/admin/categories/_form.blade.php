@@ -5,7 +5,7 @@
         <label class="form-label small">Parent category</label>
         <select name="parent_id" class="form-select">
             <option value="">— None (top level) —</option>
-            @foreach($parents as $parent)<option value="{{ $parent->id }}" {{ old('parent_id', $c->parent_id ?? '')==$parent->id ? 'selected':'' }}>{{ $parent->name }}</option>@endforeach
+            @foreach($parents as $parent)<option value="{{ $parent->id }}" {{ old('parent_id', $c->parent_id ?? '')==$parent->id ? 'selected':'' }}>{{ $parent->path_name }}</option>@endforeach
         </select>
     </div>
     <div class="row g-2">

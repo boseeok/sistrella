@@ -109,7 +109,11 @@ class SettingService
             'facebook_url'         => config('crochet.social.facebook'),
             'low_stock_threshold'  => config('crochet.inventory.low_stock_threshold'),
             'tax_rate'             => config('crochet.tax.rate'),
-            default                => null,
+            default                => match (true) {
+                str_starts_with($key, 'promo_') => config('crochet.promo.'.substr($key, 6)),
+                str_starts_with($key, 'about_') => config('crochet.about.'.substr($key, 6)),
+                default                         => null,
+            },
         };
     }
 }

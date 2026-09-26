@@ -21,6 +21,7 @@ class DashboardController extends Controller
             'verificationQueue' => $this->dashboard->verificationQueue(),
             'lowStock'          => $this->dashboard->lowStockProducts(),
             'bestSellers'       => $this->dashboard->bestSellers(),
+            'productLines'      => $this->dashboard->productLines(),
         ]);
     }
 

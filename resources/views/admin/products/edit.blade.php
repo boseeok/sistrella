@@ -10,4 +10,10 @@
 <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">@csrf @method('PUT')
     @include('admin.products._form')
 </form>
+
+{{-- Image actions (HTML forms can't nest, so the gallery buttons point here) --}}
+@foreach($product->images as $img)
+    <form id="img-primary-{{ $img->id }}" action="{{ route('admin.products.images.primary', [$product, $img]) }}" method="POST" class="d-none">@csrf @method('PATCH')</form>
+    <form id="img-delete-{{ $img->id }}" action="{{ route('admin.products.images.destroy', [$product, $img]) }}" method="POST" class="d-none">@csrf @method('DELETE')</form>
+@endforeach
 @endsection

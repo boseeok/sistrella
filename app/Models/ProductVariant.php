@@ -35,6 +35,17 @@ class ProductVariant extends Model
 
     public function getLabelAttribute(): string
     {
-        return $this->attributeValues->pluck('value')->implode(' / ');
+        return $this->attributeValues->sortBy('attribute_id')->pluck('value')->implode(' / ');
+    }
+
+    /** The value this variant has for an attribute slug ("color", "size"), if any. */
+    public function valueFor(string $attributeSlug): ?AttributeValue
+    {
+        return $this->attributeValues->first(fn ($v) => $v->attribute?->slug === $attributeSlug);
+    }
+
+    public function getInStockAttribute(): bool
+    {
+        return $this->is_active && (! $this->product?->track_inventory || $this->stock > 0);
     }
 }

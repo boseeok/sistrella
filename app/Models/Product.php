@@ -105,6 +105,12 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
+    /** Occasions and curated collections this product belongs to. */
+    public function collections(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductCollection::class, 'collection_product', 'product_id', 'collection_id');
+    }
+
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
@@ -219,7 +225,7 @@ class Product extends Model
         }
 
         if ($this->type === 'variable') {
-            return $this->variants->sum('stock') > 0;
+            return $this->variants->where('is_active', true)->sum('stock') > 0;
         }
 
         return $this->stock > 0;
@@ -235,13 +241,7 @@ class Product extends Model
         $img = $this->relationLoaded('primaryImage') ? $this->primaryImage : $this->primaryImage()->first();
         $img = $img ?: ($this->relationLoaded('images') ? $this->images->first() : $this->images()->first());
 
-        if (! $img) {
-            return $this->placeholderImage();
-        }
-
-        return Str::startsWith($img->path, ['http://', 'https://'])
-            ? $img->path
-            : asset('storage/'.$img->path);
+        return $img ? $img->url : $this->placeholderImage();
     }
 
     /**

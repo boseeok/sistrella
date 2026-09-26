@@ -3,9 +3,10 @@
 
 @section('content')
 <div class="container" style="max-width:640px">
+    <x-checkout-steps :current="3" />
     <div class="card p-4 p-md-5 text-center">
         <i class="bi bi-whatsapp text-success" style="font-size:3.5rem"></i>
-        <h2 class="section-title mt-3">Almost done!</h2>
+        <h1 class="section-title h2 mt-3">Almost done!</h1>
         <p class="text-muted">Order <strong>{{ $order->order_number }}</strong> has been created. To confirm it, send us the pre-filled message on WhatsApp to arrange your advance payment.</p>
 
         <div class="prepay-note p-3 text-start small my-3">

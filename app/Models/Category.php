@@ -56,6 +56,36 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
 
+    /** Full "Crochet › Amigurumi › Animals" label for select boxes and details. */
+    public function getPathNameAttribute(): string
+    {
+        return $this->parent ? $this->parent->path_name.' › '.$this->name : $this->name;
+    }
+
+    /** The top-level ancestor (product line), e.g. "Crochet". */
+    public function getRootAttribute(): Category
+    {
+        return $this->parent ? $this->parent->root : $this;
+    }
+
+    /**
+     * IDs of this category plus every nested sub-category, so a parent
+     * category page also lists the products filed under its children.
+     *
+     * @return array<int,int>
+     */
+    public function descendantAndSelfIds(): array
+    {
+        $ids   = [$this->id];
+        $level = [$this->id];
+
+        while ($level = static::whereIn('parent_id', $level)->pluck('id')->all()) {
+            $ids = array_merge($ids, $level);
+        }
+
+        return $ids;
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
