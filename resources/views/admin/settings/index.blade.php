@@ -19,7 +19,7 @@
 
         <div class="card p-4 mb-3">
             <h6 class="fw-bold mb-3">Prepayment Policy</h6>
-            <div class="prepay-note p-2 small mb-3" style="background:#ccfbf1;border-left:4px solid #0D9488;border-radius:.4rem">Orders above the threshold require the advance %; smaller orders are full COD.</div>
+            <div class="prepay-note p-2 small mb-3" style="background:#ccfbf1;border-left:4px solid #0D9488;border-radius:.4rem">{{ prepayment_notice() }} Smaller orders are full COD.</div>
             <div class="row g-2">
                 <div class="col-md-6 mb-2"><label class="form-label small">Threshold *</label><input type="number" step="0.01" name="prepayment_threshold" value="{{ $s('prepayment_threshold') }}" class="form-control" required></div>
                 <div class="col-md-6 mb-2"><label class="form-label small">Advance percent *</label><input type="number" step="0.01" name="prepayment_percent" value="{{ $s('prepayment_percent') }}" class="form-control" required></div>

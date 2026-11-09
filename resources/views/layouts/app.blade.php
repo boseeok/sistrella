@@ -6,6 +6,7 @@
     $ogImage = trim($__env->yieldContent('og_image')) ?: asset('images/hero-crochet.jpg');
     $isCollection = fn (?string $c) => request()->routeIs('shop') && request('collection') === $c;
     $searchTerm = is_string(request('search')) ? request('search') : '';
+    $footerWhatsappNumber = preg_replace('/\D+/', '', (string) setting('whatsapp_number', ''));
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -226,6 +227,7 @@
                     @if(setting('store_email'))<li><i class="bi bi-envelope me-2"></i><a href="mailto:{{ setting('store_email') }}">{{ setting('store_email') }}</a></li>@endif
                 </ul>
                 <div class="social d-flex gap-2 mt-3">
+                    @if($footerWhatsappNumber)<a href="https://wa.me/{{ $footerWhatsappNumber }}" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>@endif
                     @if(setting('facebook_url'))<a href="{{ setting('facebook_url') }}" target="_blank" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>@endif
                     @if(setting('instagram_url'))<a href="{{ setting('instagram_url') }}" target="_blank" rel="noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a>@endif
                     @if(setting('tiktok_url'))<a href="{{ setting('tiktok_url') }}" target="_blank" rel="noopener" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>@endif

@@ -197,8 +197,10 @@
     .whatsapp-float:hover{transform:scale(1.08);color:#fff;}
     .has-sticky-buy .whatsapp-float{bottom:92px;}
 
-    .toast-msg{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:1100;color:#fff;padding:.75rem 1.15rem;border-radius:999px;box-shadow:var(--shadow);font-size:.9rem;display:flex;gap:.75rem;align-items:center;max-width:92vw;animation:toastIn .2s ease;}
+    .toast-msg{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:1100;box-sizing:border-box;width:max-content;max-width:min(92vw,420px);color:#fff;padding:.7rem 1rem;border-radius:14px;box-shadow:var(--shadow);font-size:.9rem;display:flex;gap:.75rem;align-items:center;animation:toastIn .2s ease;}
     .toast-msg.ok{background:var(--forest-dark);} .toast-msg.err{background:#A33A2B;}
-    .toast-msg a{color:#fff;text-decoration:underline;font-weight:600;white-space:nowrap;}
+    .toast-msg > span{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;}
+    .toast-msg a{flex:0 0 auto;color:#fff;text-decoration:underline;font-weight:600;white-space:nowrap;}
+    @media(max-width:575.98px){.toast-msg{width:calc(100vw - 2rem);max-width:420px;}}
     @keyframes toastIn{from{opacity:0;transform:translate(-50%,8px);}to{opacity:1;transform:translate(-50%,0);}}
 </style>

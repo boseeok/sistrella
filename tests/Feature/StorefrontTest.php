@@ -52,12 +52,33 @@ class StorefrontTest extends TestCase
             ->assertSee('images/payment-esewa.png', false)
             ->assertSee('images/payment-khalti.png', false)
             ->assertSee('images/payment-bank-transfer.svg', false)
+            ->assertSee('https://wa.me/9779761612457', false)
+            ->assertSee('aria-label="WhatsApp"', false)
+            ->assertSee('Orders above NPR 500 require 50% advance payment to confirm your order.')
             ->assertSee(route('collections.show', 'valentines-day'), false)
             ->assertDontSee('Curated collections')
             ->assertSee('New arrivals')
             ->assertDontSee('Featured pieces')
             ->assertSee('Amigurumi')
             ->assertSee('rel="canonical"', false);
+    }
+
+    public function test_footer_whatsapp_and_prepayment_notice_use_admin_settings(): void
+    {
+        $settings = app(\App\Services\SettingService::class);
+        $settings->set('whatsapp_number', '+977 980 111 2222', 'string', 'social');
+        $settings->set('prepayment_threshold', 750, 'float', 'payments');
+        $settings->set('prepayment_percent', 30, 'float', 'payments');
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('https://wa.me/9779801112222', false)
+            ->assertSee('Orders above NPR 750 require 30% advance payment to confirm your order.');
+
+        $this->actingAs(User::where('email', 'admin@crochetstore.test')->firstOrFail())
+            ->get(route('admin.settings.index'))
+            ->assertOk()
+            ->assertSee('Orders above NPR 750 require 30% advance payment to confirm your order.');
     }
 
     public function test_shop_listing_supports_collections_sorting_and_price_filters(): void
