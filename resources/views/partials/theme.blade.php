@@ -124,6 +124,7 @@
     .mega-col a:hover img{transform:scale(1.03);}
     .mega-col ul a{color:var(--muted);font-size:.88rem;line-height:1.9;} .mega-col ul a:hover{color:var(--terracotta);}
     .notif-menu{min-width:340px;max-width:360px;max-height:75vh;overflow:auto;}
+    .offcanvas-nav{width:min(85vw,360px)!important;}
     .offcanvas-nav .list-group-item{border:0;border-bottom:1px solid var(--line);padding:.85rem 0;font-weight:600;background:none;}
     .offcanvas-nav .accordion-button{padding:.85rem 0;font-weight:600;background:none;box-shadow:none;}
 
@@ -131,8 +132,7 @@
     .pcard{position:relative;display:flex;flex-direction:column;height:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:box-shadow .2s,transform .2s;}
     .pcard:hover{box-shadow:var(--shadow);transform:translateY(-3px);}
     .pcard-media{position:relative;aspect-ratio:1/1;background:var(--sage-light);overflow:hidden;}
-    .pcard-media img{width:100%;height:100%;object-fit:cover;transition:transform .45s ease;}
-    .pcard:hover .pcard-media img{transform:scale(1.05);}
+    .pcard-media img{width:100%;height:100%;object-fit:contain;padding:.35rem;transition:transform .45s ease;}
     .pcard-badges{position:absolute;top:.6rem;left:.6rem;display:flex;flex-direction:column;gap:.3rem;align-items:flex-start;z-index:2;}
     .pbadge{font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.28rem .55rem;border-radius:999px;background:#fff;color:var(--ink);box-shadow:var(--shadow-sm);}
     .pbadge-sale{background:var(--terracotta);color:#fff;} .pbadge-new{background:var(--forest);color:#fff;}
@@ -183,13 +183,14 @@
     .steps .current{color:var(--ink);}
 
     /* Newsletter & footer */
-    .newsletter{background:var(--sage-light);border-radius:calc(var(--radius) * 1.4);}
     .footer{background:var(--forest-dark);color:#E9E6DC;}
     .footer h2{font-family:var(--font-body);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:#fff;font-weight:700;margin-bottom:1rem;}
     .footer a{color:#D6D3C8;} .footer a:hover{color:#fff;}
     .footer li{margin-bottom:.45rem;}
     .footer .social a{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.25);display:inline-flex;align-items:center;justify-content:center;}
     .footer .social a:hover{background:rgba(255,255,255,.1);}
+    .footer-payments img{display:block;width:auto;height:28px;border-radius:4px;}
+    @media(max-width:767.98px){.footer-bottom{align-items:flex-start!important;}}
 
     .whatsapp-float{position:fixed;bottom:22px;right:22px;width:54px;height:54px;background:#25D366;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 6px 20px rgba(37,211,102,.45);z-index:1040;transition:transform .15s;}
     .whatsapp-float:hover{transform:scale(1.08);color:#fff;}

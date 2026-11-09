@@ -161,32 +161,6 @@
 
     <x-product-rail :products="$trending" title="Trending now" eyebrow="Popular this week" id="railTrending" :link="route('shop', ['collection' => 'trending'])" class="pt-2" />
 
-    {{-- Customer reviews (approved reviews from the database) --}}
-    @if(($reviews ?? collect())->isNotEmpty())
-        <section class="section pt-2" aria-labelledby="reviewsTitle">
-            <x-section-header title="Kind words from customers" eyebrow="Reviews" heading-id="reviewsTitle" />
-            <div class="row g-3 g-md-4">
-                @foreach($reviews as $review)
-                    <div class="col-md-4">
-                        <figure class="surface h-100 p-4 mb-0">
-                            <div class="rating mb-2" aria-label="{{ $review->rating }} out of 5 stars">
-                                @for($i = 1; $i <= 5; $i++)<i class="bi {{ $i <= $review->rating ? 'bi-star-fill' : 'bi-star' }}" aria-hidden="true"></i>@endfor
-                            </div>
-                            <blockquote class="mb-3">
-                                @if($review->title)<p class="fw-semibold mb-1">{{ $review->title }}</p>@endif
-                                <p class="text-muted mb-0">“{{ \Illuminate\Support\Str::limit($review->body, 180) }}”</p>
-                            </blockquote>
-                            <figcaption class="small">
-                                <strong>{{ \Illuminate\Support\Str::before($review->user->name ?? 'Customer', ' ') }}</strong>
-                                <span class="text-muted">on <a href="{{ route('products.show', $review->product->slug) }}">{{ $review->product->name }}</a></span>
-                            </figcaption>
-                        </figure>
-                    </div>
-                @endforeach
-            </div>
-        </section>
-    @endif
-
     <x-product-rail :products="$recentlyViewed" title="Recently viewed" id="railRecent" class="pt-2" />
 </div>
 @endsection

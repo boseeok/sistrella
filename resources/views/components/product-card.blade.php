@@ -1,5 +1,5 @@
 @props(['product', 'headingLevel' => 'h3'])
-{{-- Storefront product card: image, badges, wishlist, quick add, title, rating, price --}}
+{{-- Storefront product card: image, wishlist, quick add, title, rating, price --}}
 @php
     // One wishlist lookup per request, shared by every card on the page.
     $wishlisted = once(fn () => auth()->check()
@@ -11,19 +11,6 @@
 <article {{ $attributes->merge(['class' => 'pcard']) }}>
     <div class="pcard-media">
         <img src="{{ $product->thumbnail }}" alt="{{ $product->primaryImage?->alt ?: $product->name }}" loading="lazy" decoding="async" width="600" height="600">
-
-        <div class="pcard-badges">
-            @if(! $product->in_stock)
-                <span class="pbadge pbadge-muted">Sold out</span>
-            @elseif($product->discount_percent > 0)
-                <span class="pbadge pbadge-sale">{{ $product->isOnFlashSale() ? 'Flash' : 'Sale' }} −{{ $product->discount_percent }}%</span>
-            @endif
-            @if($product->is_new_arrival)
-                <span class="pbadge pbadge-new">New</span>
-            @elseif($product->is_best_seller)
-                <span class="pbadge">Bestseller</span>
-            @endif
-        </div>
 
         <div class="pcard-wish">
             @auth

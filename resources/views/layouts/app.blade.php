@@ -214,32 +214,10 @@
     @yield('content')
 </main>
 
-{{-- Newsletter --}}
-@unless(request()->routeIs('checkout.*'))
-<section class="container my-5" aria-labelledby="newsletterTitle">
-    <div class="newsletter p-4 p-md-5">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-6">
-                <div class="eyebrow mb-2">Stay in the loop</div>
-                <h2 id="newsletterTitle" class="h3 mb-2">New pieces, restocks &amp; maker stories</h2>
-                <p class="text-muted mb-0">Join our list for first look at new arrivals and members-only offers. No spam, unsubscribe anytime.</p>
-            </div>
-            <div class="col-lg-6">
-                <form action="{{ route('newsletter.subscribe') }}" method="POST" class="d-flex flex-column flex-sm-row gap-2">@csrf
-                    <label for="newsletterEmail" class="visually-hidden">Email address</label>
-                    <input id="newsletterEmail" type="email" name="email" class="form-control form-control-lg" placeholder="you@example.com" autocomplete="email" required>
-                    <button class="btn btn-brand btn-lg">Subscribe</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
-@endunless
-
 <footer class="footer pt-5 pb-4">
     <div class="container">
         <div class="row g-4">
-            <div class="col-lg-4">
+            <div class="col-12 col-md-6 col-lg-3">
                 <img src="{{ asset('images/logo-header.png') }}" alt="{{ $storeName }}" class="bg-white rounded-3 p-2 mb-3" height="60" width="96" style="height:60px;width:auto">
                 <p class="small opacity-75 mb-3">{{ setting('store_tagline') }}</p>
                 <ul class="list-unstyled small">
@@ -253,7 +231,7 @@
                     @if(setting('tiktok_url'))<a href="{{ setting('tiktok_url') }}" target="_blank" rel="noopener" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>@endif
                 </div>
             </div>
-            <div class="col-6 col-md-4 col-lg-2">
+            <div class="col-6 col-md-6 col-lg-3">
                 <h2>Shop</h2>
                 <ul class="list-unstyled small">
                     <li><a href="{{ route('shop') }}">Shop all</a></li>
@@ -263,7 +241,7 @@
                     <li><a href="{{ route('custom.create') }}">Custom orders</a></li>
                 </ul>
             </div>
-            <div class="col-6 col-md-4 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3">
                 <h2>Categories</h2>
                 <ul class="list-unstyled small">
                     @foreach(($menuCategories ?? collect()) as $cat)
@@ -271,7 +249,7 @@
                     @endforeach
                 </ul>
             </div>
-            <div class="col-6 col-md-4 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3">
                 <h2>Help</h2>
                 <ul class="list-unstyled small">
                     <li><a href="{{ route('orders.track.form') }}">Track your order</a></li>
@@ -283,9 +261,14 @@
             </div>
         </div>
         <hr class="border-light opacity-25 mt-4">
-        <div class="d-flex flex-column flex-md-row justify-content-between gap-2 small opacity-75">
+        <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 small opacity-75">
             <span>&copy; {{ date('Y') }} {{ $storeName }}. Handmade with <i class="bi bi-heart-fill" aria-hidden="true"></i><span class="visually-hidden">love</span> in Nepal.</span>
-            <span><i class="bi bi-cash-coin me-1"></i>Cash on Delivery · eSewa · Khalti · Bank transfer</span>
+            <div class="footer-payments d-flex flex-wrap align-items-center gap-2" aria-label="Accepted payment methods">
+                <span class="text-nowrap"><i class="bi bi-cash-coin me-1" aria-hidden="true"></i>Cash on Delivery</span>
+                <img src="{{ asset('images/payment-esewa.svg') }}" alt="eSewa" width="72" height="28" loading="lazy">
+                <img src="{{ asset('images/payment-khalti.svg') }}" alt="Khalti" width="72" height="28" loading="lazy">
+                <img src="{{ asset('images/payment-bank-transfer.svg') }}" alt="Bank transfer" width="104" height="28" loading="lazy">
+            </div>
         </div>
     </div>
 </footer>

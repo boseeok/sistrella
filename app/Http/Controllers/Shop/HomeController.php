@@ -7,7 +7,6 @@ use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductCollection;
-use App\Models\Review;
 use App\Repositories\ProductRepository;
 use Illuminate\View\View;
 
@@ -28,9 +27,6 @@ class HomeController extends Controller
             'flashSaleEndsAt'  => Product::onFlashSale()->min('flash_sale_ends_at'),
             'featuredCategories' => $this->categoryTiles(),
             'recentlyViewed'   => $this->recentlyViewed(),
-            'reviews'          => Review::where('is_approved', true)->where('rating', '>=', 4)
-                ->whereNotNull('body')->whereHas('product', fn ($q) => $q->active())
-                ->with(['user:id,name', 'product:id,name,slug'])->latest()->take(3)->get(),
         ]);
     }
 

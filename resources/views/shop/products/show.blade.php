@@ -57,7 +57,7 @@
         <div class="col-lg-6">
             <div class="pd-gallery">
                 <div class="zoom-wrap surface">
-                    <img id="mainImage" src="{{ $main?->url ?? $product->thumbnail }}" alt="{{ $main?->alt ?: $product->name }}" class="zoom-img" width="900" height="900" fetchpriority="high">
+                    <img id="mainImage" src="{{ $main?->url ?? $product->thumbnail }}" alt="{{ $main?->alt ?: $product->name }}" class="zoom-img" width="900" height="900" fetchpriority="high" role="button" tabindex="0" aria-label="Open full-size product image">
                     <div class="pcard-badges">
                         @if($product->discount_percent > 0)<span class="pbadge pbadge-sale">Save {{ $product->discount_percent }}%</span>@endif
                         @if($product->is_new_arrival)<span class="pbadge pbadge-new">New</span>@endif
@@ -79,6 +79,18 @@
                         @endforeach
                     </div>
                 @endif
+            </div>
+            <div class="modal fade" id="productImageModal" tabindex="-1" aria-label="Full-size product image" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl">
+                    <div class="modal-content bg-transparent border-0">
+                        <div class="modal-header border-0 p-0 pb-2">
+                            <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal" aria-label="Close image"></button>
+                        </div>
+                        <div class="modal-body p-0">
+                            <img id="expandedProductImage" src="{{ $main?->url ?? $product->thumbnail }}" alt="{{ $main?->alt ?: $product->name }}" class="d-block mx-auto rounded-3" style="max-width:100%;max-height:85vh;object-fit:contain">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -289,7 +301,7 @@
     .pd-gallery{position:sticky;top:150px;}
     @media(max-width:991.98px){.pd-gallery{position:static;}}
     .zoom-wrap{position:relative;overflow:hidden;aspect-ratio:1/1;background:var(--sage-light);}
-    .zoom-img{width:100%;height:100%;object-fit:cover;transition:transform .15s ease;transform-origin:center;cursor:zoom-in;display:block;}
+    .zoom-img{width:100%;height:100%;object-fit:contain;transition:transform .15s ease;transform-origin:center;cursor:zoom-in;display:block;}
     .zoom-img.zoomed{cursor:move;}
     .zoom-controls{position:absolute;bottom:12px;right:12px;display:flex;flex-direction:column;gap:6px;z-index:2;}
     .zoom-controls button{width:38px;height:38px;border:none;border-radius:50%;background:rgba(255,255,255,.94);box-shadow:var(--shadow-sm);color:var(--ink);display:flex;align-items:center;justify-content:center;}
@@ -328,7 +340,20 @@
     document.getElementById('zoomIn').addEventListener('click', () => { scale = Math.min(max, scale + step); apply(); });
     document.getElementById('zoomOut').addEventListener('click', () => { scale = Math.max(min, scale - step); apply(); });
     document.getElementById('zoomReset').addEventListener('click', reset);
-    img.addEventListener('click', () => { scale = scale >= max ? min : scale + step; apply(); });
+    const imageModal = document.getElementById('productImageModal');
+    const expandedImage = document.getElementById('expandedProductImage');
+    const openImage = () => {
+        expandedImage.src = img.src;
+        expandedImage.alt = img.alt;
+        bootstrap.Modal.getOrCreateInstance(imageModal).show();
+    };
+    img.addEventListener('click', openImage);
+    img.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openImage();
+        }
+    });
     img.addEventListener('mousemove', (e) => {
         if (scale <= 1) return;
         const r = img.getBoundingClientRect();
@@ -342,6 +367,8 @@
         btn.setAttribute('aria-pressed', 'true');
         img.src = btn.dataset.src;
         img.alt = btn.dataset.alt;
+        expandedImage.src = img.src;
+        expandedImage.alt = img.alt;
         reset();
     }));
 })();
