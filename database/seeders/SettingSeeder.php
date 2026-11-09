@@ -47,7 +47,7 @@ class SettingSeeder extends Seeder
 
         // Contact / social
         'whatsapp_number' => ['+977 9761612457', 'string', 'social'],
-        'instagram_url'   => ['https://instagram.com/crochetstore', 'string', 'social'],
+        'instagram_url'   => ['https://www.instagram.com/_sis_trella/', 'string', 'social'],
         'facebook_url'    => ['https://facebook.com/crochetstore', 'string', 'social'],
         'tiktok_url'      => ['', 'string', 'social'],
     ];

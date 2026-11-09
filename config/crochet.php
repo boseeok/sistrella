@@ -57,7 +57,7 @@ return [
     ],
 
     'social' => [
-        'instagram' => env('INSTAGRAM_URL', 'https://instagram.com/crochetstore'),
+        'instagram' => env('INSTAGRAM_URL', 'https://www.instagram.com/_sis_trella/'),
         'facebook'  => env('FACEBOOK_URL', 'https://facebook.com/crochetstore'),
     ],
 

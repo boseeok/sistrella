@@ -89,6 +89,12 @@
                     <i class="bi bi-search"></i>
                 </button>
 
+                @guest
+                    <a class="header-icon" href="{{ route('login') }}" aria-label="Log in to view notifications">
+                        <i class="bi bi-bell"></i>
+                    </a>
+                @endguest
+
                 @auth
                     <div class="dropdown">
                         <button class="header-icon" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications{{ ($notifCount ?? 0) ? ' ('.$notifCount.' unread)' : '' }}">
@@ -268,7 +274,7 @@
             <div class="footer-payments d-flex align-items-center gap-2" aria-label="Accepted payment methods">
                 <img src="{{ asset('images/payment-esewa.png') }}" alt="eSewa" width="88" height="36" loading="lazy">
                 <img src="{{ asset('images/payment-khalti.png') }}" alt="Khalti" width="88" height="36" loading="lazy">
-                <img src="{{ asset('images/payment-bank-transfer.svg') }}" alt="Bank transfer" width="88" height="36" loading="lazy">
+                <img class="payment-fonepay" src="{{ asset('images/payment-fonepay.png') }}" alt="Fonepay" width="88" height="36" loading="lazy">
             </div>
         </div>
     </div>

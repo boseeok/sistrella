@@ -112,6 +112,7 @@
     .header-icon i{font-size:1.3rem;line-height:1;}
     .header-icon .label{font-size:.68rem;font-weight:600;margin-top:2px;}
     .header-icon .count{position:absolute;top:2px;right:2px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--terracotta);color:#fff;font-size:.66rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+    @media(max-width:767.98px){.header-main{grid-template-columns:auto minmax(0,1fr);gap:.25rem;}.header-actions{width:100%;justify-content:space-between;}}
     .main-nav{border-top:1px solid var(--line);}
     .main-nav .nav-link{color:var(--ink);font-weight:600;font-size:.9rem;padding:.8rem 1rem;position:relative;}
     .main-nav .nav-link:hover,.main-nav .nav-link.active{color:var(--forest);}
@@ -191,6 +192,7 @@
     .footer .social a:hover{background:rgba(255,255,255,.1);}
     .footer-payments{flex-wrap:nowrap;}
     .footer-payments img{display:block;flex:0 0 88px;width:88px;height:36px;padding:4px;object-fit:contain;background:#fff;border-radius:5px;}
+    .footer-payments img.payment-fonepay{background:#263522;}
     @media(max-width:767.98px){.footer-bottom{align-items:flex-start!important;}.footer-payments{gap:.4rem!important;}}
 
     .whatsapp-float{position:fixed;bottom:22px;right:22px;width:54px;height:54px;background:#25D366;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 6px 20px rgba(37,211,102,.45);z-index:1040;transition:transform .15s;}
