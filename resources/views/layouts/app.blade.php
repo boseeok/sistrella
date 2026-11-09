@@ -263,11 +263,10 @@
         <hr class="border-light opacity-25 mt-4">
         <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 small opacity-75">
             <span>&copy; {{ date('Y') }} {{ $storeName }}. Handmade with <i class="bi bi-heart-fill" aria-hidden="true"></i><span class="visually-hidden">love</span> in Nepal.</span>
-            <div class="footer-payments d-flex flex-wrap align-items-center gap-2" aria-label="Accepted payment methods">
-                <span class="text-nowrap"><i class="bi bi-cash-coin me-1" aria-hidden="true"></i>Cash on Delivery</span>
-                <img src="{{ asset('images/payment-esewa.svg') }}" alt="eSewa" width="72" height="28" loading="lazy">
-                <img src="{{ asset('images/payment-khalti.svg') }}" alt="Khalti" width="72" height="28" loading="lazy">
-                <img src="{{ asset('images/payment-bank-transfer.svg') }}" alt="Bank transfer" width="104" height="28" loading="lazy">
+            <div class="footer-payments d-flex align-items-center gap-2" aria-label="Accepted payment methods">
+                <img src="{{ asset('images/payment-esewa.png') }}" alt="eSewa" width="88" height="36" loading="lazy">
+                <img src="{{ asset('images/payment-khalti.png') }}" alt="Khalti" width="88" height="36" loading="lazy">
+                <img src="{{ asset('images/payment-bank-transfer.svg') }}" alt="Bank transfer" width="88" height="36" loading="lazy">
             </div>
         </div>
     </div>

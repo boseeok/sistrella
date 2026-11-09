@@ -10,6 +10,7 @@ use App\Models\ProductCollection;
 use App\Models\ProductVariant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -129,6 +130,35 @@ class GiftBoutiqueTest extends TestCase
         $this->delete(route('admin.collections.destroy', $collection))->assertRedirect();
         $this->assertModelMissing($collection);
         $this->assertModelExists($beanie);
+    }
+
+    public function test_admin_uploaded_occasion_image_overrides_local_homepage_default(): void
+    {
+        $birthday = ProductCollection::where('slug', 'birthday')->firstOrFail();
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('images/occasions/birthday.jpg', false);
+
+        $this->actingAs($this->admin())
+            ->put(route('admin.collections.update', $birthday), [
+                'type' => $birthday->type,
+                'name' => $birthday->name,
+                'slug' => $birthday->slug,
+                'icon' => $birthday->icon,
+                'tagline' => $birthday->tagline,
+                'product_ids' => $birthday->products()->pluck('products.id')->all(),
+                'image' => UploadedFile::fake()->image('birthday.jpg'),
+                'is_active' => 1,
+                'is_featured' => 1,
+            ])->assertSessionHasNoErrors();
+
+        $birthday->refresh();
+        Storage::disk('public')->assertExists($birthday->image);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('storage/'.$birthday->image, false)
+            ->assertDontSee('images/occasions/birthday.jpg', false);
     }
 
     // ---- Variants ---------------------------------------------------------------------------

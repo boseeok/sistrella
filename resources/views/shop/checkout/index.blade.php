@@ -83,7 +83,7 @@
                         <a href="{{ route('cart.index') }}" class="small">Edit cart</a>
                     </div>
                     <ul class="list-unstyled mb-3">
-                        @foreach($cart->items as $item)
+                        @foreach($items as $item)
                             <li class="d-flex gap-3 align-items-center mb-3">
                                 <span class="position-relative flex-shrink-0">
                                     <img src="{{ $item->product->thumbnail }}" alt="" width="60" height="60" class="rounded-3 object-fit-cover border">
@@ -96,6 +96,9 @@
                             </li>
                         @endforeach
                     </ul>
+                    @foreach($itemIds as $itemId)
+                        <input type="hidden" name="item_ids[]" value="{{ $itemId }}">
+                    @endforeach
                     <dl class="small mb-0 border-top pt-3">
                         <div class="d-flex justify-content-between mb-2"><dt class="fw-normal text-muted">Subtotal</dt><dd class="mb-0">{{ money($totals['subtotal']) }}</dd></div>
                         @if($totals['discount'] > 0)<div class="d-flex justify-content-between mb-2 text-success"><dt class="fw-normal">Discount @if($totals['coupon_code'])({{ $totals['coupon_code'] }})@endif</dt><dd class="mb-0">−{{ money($totals['discount']) }}</dd></div>@endif

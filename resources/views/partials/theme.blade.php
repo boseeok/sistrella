@@ -189,8 +189,9 @@
     .footer li{margin-bottom:.45rem;}
     .footer .social a{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.25);display:inline-flex;align-items:center;justify-content:center;}
     .footer .social a:hover{background:rgba(255,255,255,.1);}
-    .footer-payments img{display:block;width:auto;height:28px;border-radius:4px;}
-    @media(max-width:767.98px){.footer-bottom{align-items:flex-start!important;}}
+    .footer-payments{flex-wrap:nowrap;}
+    .footer-payments img{display:block;flex:0 0 88px;width:88px;height:36px;padding:4px;object-fit:contain;background:#fff;border-radius:5px;}
+    @media(max-width:767.98px){.footer-bottom{align-items:flex-start!important;}.footer-payments{gap:.4rem!important;}}
 
     .whatsapp-float{position:fixed;bottom:22px;right:22px;width:54px;height:54px;background:#25D366;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 6px 20px rgba(37,211,102,.45);z-index:1040;transition:transform .15s;}
     .whatsapp-float:hover{transform:scale(1.08);color:#fff;}

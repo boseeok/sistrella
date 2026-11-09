@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -138,7 +139,7 @@ class CartService
      *
      * @return array<string,mixed>
      */
-    public function totals(?Cart $cart = null): array
+    public function totals(?Cart $cart = null, ?EloquentCollection $items = null): array
     {
         $cart ??= $this->current(false);
 
@@ -146,14 +147,20 @@ class CartService
             return $this->emptyTotals();
         }
 
-        $cart->loadMissing('items.product', 'items.variant');
+        if ($items === null) {
+            $cart->loadMissing('items.product', 'items.variant');
+            $items = $cart->items;
+        } else {
+            $items->loadMissing(['product', 'variant']);
+        }
 
-        $subtotal = $this->subtotal($cart);
+        $subtotal = (float) $items->sum(fn (CartItem $item) => $item->line_total);
 
         // Coupon
         $discount = 0.0;
         $coupon   = $cart->coupon;
-        if ($coupon && $coupon->isValid($subtotal)) {
+        $couponValid = $coupon && $coupon->isValid($subtotal);
+        if ($couponValid) {
             $discount = $coupon->discountFor($subtotal);
         }
 
@@ -169,10 +176,10 @@ class CartService
         $prepayment = $this->prepayment->breakdown($grandTotal);
 
         return [
-            'item_count'  => (int) $cart->items->sum('quantity'),
+            'item_count'  => (int) $items->sum('quantity'),
             'subtotal'    => round($subtotal, 2),
             'discount'    => round($discount, 2),
-            'coupon_code' => $coupon?->code,
+            'coupon_code' => $couponValid ? $coupon->code : null,
             'tax_rate'    => $taxRate,
             'tax'         => $tax,
             'shipping'    => $shipping,

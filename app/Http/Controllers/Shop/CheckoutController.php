@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
+use App\Models\CartItem;
 use App\Services\CartService;
 use App\Services\OrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class CheckoutController extends Controller
@@ -17,17 +20,35 @@ class CheckoutController extends Controller
     ) {
     }
 
-    public function index(): View|RedirectResponse
+    public function index(Request $request): View|RedirectResponse
     {
-        $cart   = $this->cart->current(false);
-        $totals = $this->cart->totals($cart);
+        $cart = $this->cart->current(false);
 
-        if ($totals['item_count'] === 0) {
+        if (! $cart) {
             return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
         }
 
+        if ($request->query('selection') === '1') {
+            $selection = $request->validate([
+                'selection' => ['required', 'in:1'],
+                'item_ids'  => ['required', 'array', 'min:1'],
+                'item_ids.*' => ['required', 'integer', 'distinct'],
+            ]);
+            $items = $this->selectedCartItems($cart, $selection['item_ids']);
+        } else {
+            $items = $cart->items()->with(['product', 'variant'])->get();
+        }
+
+        if ($items->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+        }
+
+        $totals = $this->cart->totals($cart, $items);
+
         return view('shop.checkout.index', [
             'cart'      => $cart,
+            'items'     => $items,
+            'itemIds'   => $items->modelKeys(),
             'totals'    => $totals,
             'addresses' => auth()->user()?->addresses ?? collect(),
         ]);
@@ -52,7 +73,18 @@ class CheckoutController extends Controller
             'postal_code'    => ['nullable', 'string', 'max:20'],
             'notes'          => ['nullable', 'string', 'max:1000'],
             'payment_choice' => ['required', 'in:prepayment,cod'],
+            'item_ids'       => ['sometimes', 'required', 'array', 'min:1'],
+            'item_ids.*'     => ['required', 'integer', 'distinct'],
         ]);
+
+        $itemIds = $data['item_ids'] ?? null;
+        if ($itemIds !== null) {
+            $cart = $this->cart->current(false);
+            if (! $cart) {
+                return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+            }
+            $this->selectedCartItems($cart, $itemIds);
+        }
 
         $shipping = [
             'full_name'   => $data['customer_name'],
@@ -72,7 +104,7 @@ class CheckoutController extends Controller
             'customer_phone'   => $data['customer_phone'],
             'shipping_address' => $shipping,
             'notes'            => $data['notes'] ?? null,
-        ]);
+        ], $itemIds);
 
         // Prepayment orders are sent through WhatsApp to arrange the advance.
         if ($order->requires_prepayment) {
@@ -81,5 +113,24 @@ class CheckoutController extends Controller
 
         return redirect()->route('orders.confirmation', $order->order_number)
             ->with('success', 'Your order has been placed! Pay cash on delivery.');
+    }
+
+    /**
+     * Resolve only active items from the current cart and reject stale or foreign IDs.
+     *
+     * @param  array<int, int|string>  $itemIds
+     * @return \Illuminate\Database\Eloquent\Collection<int, CartItem>
+     */
+    private function selectedCartItems(Cart $cart, array $itemIds)
+    {
+        $items = $cart->items()->whereIn('id', $itemIds)->with(['product', 'variant'])->get();
+
+        if ($items->count() !== count($itemIds)) {
+            throw ValidationException::withMessages([
+                'item_ids' => 'One or more selected items are no longer available in your cart.',
+            ]);
+        }
+
+        return $items;
     }
 }

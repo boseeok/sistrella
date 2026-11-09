@@ -47,6 +47,11 @@ class StorefrontTest extends TestCase
             ->assertSee('Ribbon Bouquets')
             ->assertSee('Fuzzy Wire')
             ->assertSee('Shop by occasion')
+            ->assertSee('images/occasions/birthday.jpg', false)
+            ->assertSee('images/occasions/dashain-tihar.jpg', false)
+            ->assertSee('images/payment-esewa.png', false)
+            ->assertSee('images/payment-khalti.png', false)
+            ->assertSee('images/payment-bank-transfer.svg', false)
             ->assertSee(route('collections.show', 'valentines-day'), false)
             ->assertDontSee('Curated collections')
             ->assertSee('New arrivals')
@@ -134,7 +139,11 @@ class StorefrontTest extends TestCase
 
         $item = CartItem::where('product_id', $product->id)->firstOrFail();
 
-        $this->get('/cart')->assertOk()->assertSee('Tiny Bunny Plush')->assertSee('Order summary');
+        $this->get('/cart')->assertOk()
+            ->assertSee('Tiny Bunny Plush')
+            ->assertSee('Order summary')
+            ->assertSee('name="item_ids[]"', false)
+            ->assertSee('Log in to checkout');
 
         $this->patch("/cart/items/{$item->id}", ['quantity' => 3])->assertRedirect();
         $this->assertSame(3, $item->fresh()->quantity);
@@ -159,6 +168,43 @@ class StorefrontTest extends TestCase
             ->assertRedirect(route('checkout.index'));
 
         $this->get('/checkout')->assertOk()->assertSee('Penguin Keychain')->assertSee('Place order');
+    }
+
+    public function test_customer_can_checkout_selected_cart_items_and_keep_the_rest(): void
+    {
+        $user = User::factory()->create(['email' => 'selective-buyer@example.com']);
+        $this->actingAs($user);
+
+        $selectedProduct = Product::where('slug', 'single-sunflower-stem')->firstOrFail();
+        $otherProduct = Product::where('slug', 'penguin-keychain')->firstOrFail();
+        $this->postJson('/cart/add', ['product_id' => $selectedProduct->id])->assertOk();
+        $this->postJson('/cart/add', ['product_id' => $otherProduct->id])->assertOk();
+
+        $selectedItem = CartItem::where('product_id', $selectedProduct->id)->firstOrFail();
+        $otherItem = CartItem::where('product_id', $otherProduct->id)->firstOrFail();
+
+        $this->get(route('checkout.index', [
+            'selection' => 1,
+            'item_ids' => [$selectedItem->id],
+        ]))->assertOk()
+            ->assertSee($selectedProduct->name)
+            ->assertDontSee($otherProduct->name);
+
+        $response = $this->post(route('checkout.place'), [
+            'customer_name'  => 'Selective Buyer',
+            'customer_phone' => '9800000000',
+            'customer_email' => 'selective-buyer@example.com',
+            'line1'          => 'Kalanki',
+            'city'           => 'Kathmandu',
+            'payment_choice' => 'cod',
+            'item_ids'       => [$selectedItem->id],
+        ]);
+
+        $order = Order::where('customer_email', 'selective-buyer@example.com')->firstOrFail();
+        $this->assertSame([$selectedProduct->id], $order->items()->pluck('product_id')->all());
+        $this->assertDatabaseMissing('cart_items', ['id' => $selectedItem->id]);
+        $this->assertDatabaseHas('cart_items', ['id' => $otherItem->id]);
+        $response->assertRedirect(route('orders.confirmation', $order->order_number));
     }
 
     public function test_guests_must_log_in_before_placing_an_order(): void

@@ -30,6 +30,7 @@
                 <div class="col-md-8 mb-2">
                     <label class="form-label small">Image</label>
                     <input type="file" name="image" accept="image/jpeg,image/png,image/webp" class="form-control @error('image') is-invalid @enderror">
+                    <div class="form-text">Uploaded images replace the default photo shown on the homepage.</div>
                     @error('image')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     @if($c?->image_url)<img src="{{ $c->image_url }}" alt="" width="120" class="rounded mt-2" style="aspect-ratio:4/3;object-fit:cover">@endif
                 </div>

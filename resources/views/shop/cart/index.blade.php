@@ -36,6 +36,10 @@
                                 <img src="{{ $item->product->thumbnail }}" alt="{{ $item->product->name }}" width="96" height="96" loading="lazy">
                             </a>
                             <div class="cart-info">
+                                <label class="cart-checkout-select small text-muted">
+                                    <input type="checkbox" class="form-check-input m-0" name="item_ids[]" value="{{ $item->id }}" form="checkoutSelection" required checked>
+                                    <span>Select for checkout</span>
+                                </label>
                                 <a href="{{ route('products.show', $item->product->slug) }}" class="fw-semibold text-reset">{{ $item->product->name }}</a>
                                 @if($item->options)<div class="small text-muted">{{ collect($item->options)->map(fn($v,$k)=>is_string($k)?"$k: $v":$v)->join(', ') }}</div>@endif
                                 <div class="small text-muted">{{ money($item->unit_price) }} each</div>
@@ -86,6 +90,9 @@
 
             {{-- Summary --}}
             <div class="col-lg-4">
+                <form id="checkoutSelection" action="{{ route('checkout.index') }}" method="GET">
+                    <input type="hidden" name="selection" value="1">
+                </form>
                 <aside class="surface p-4 summary-sticky" aria-labelledby="summaryTitle">
                     <h2 id="summaryTitle" class="h5 mb-3" style="font-family:var(--font-body);font-weight:700">Order summary</h2>
 
@@ -114,6 +121,7 @@
                     </dl>
                     <hr>
                     <div class="d-flex justify-content-between align-items-baseline fw-bold fs-5"><span>Total</span><span class="price">{{ money($totals['grand_total']) }}</span></div>
+                    @error('item_ids')<p class="text-danger small mt-2 mb-0">{{ $message }}</p>@enderror
 
                     @if($totals['prepayment']['requires_prepayment'])
                         <div class="prepay-note p-3 mt-3 small">
@@ -126,10 +134,10 @@
                     @endif
 
                     @auth
-                        <a href="{{ route('checkout.index') }}" class="btn btn-brand btn-lg w-100 mt-3">Checkout <i class="bi bi-arrow-right ms-1"></i></a>
+                        <button type="submit" form="checkoutSelection" class="btn btn-brand btn-lg w-100 mt-3">Checkout selected items <i class="bi bi-arrow-right ms-1"></i></button>
                     @else
                         {{-- Checkout needs an account; the auth redirect brings them back here after login/sign-up. --}}
-                        <a href="{{ route('checkout.index') }}" class="btn btn-brand btn-lg w-100 mt-3"><i class="bi bi-person me-1"></i>Log in to checkout</a>
+                        <button type="submit" form="checkoutSelection" class="btn btn-brand btn-lg w-100 mt-3"><i class="bi bi-person me-1"></i>Log in to checkout</button>
                         <p class="small text-muted text-center mt-2 mb-0">New here? <a href="{{ route('register') }}">Create an account</a> — your cart is kept.</p>
                     @endauth
                     <ul class="list-unstyled small text-muted mt-3 mb-0">
@@ -149,6 +157,7 @@
     .cart-line:first-child{padding-top:0;} .cart-line:last-child{padding-bottom:0;}
     .cart-thumb img{width:96px;height:96px;object-fit:cover;border-radius:var(--radius-sm);background:var(--sage-light);}
     .cart-total{min-width:100px;text-align:right;}
+    .cart-checkout-select{display:flex;align-items:center;gap:.45rem;width:max-content;margin-bottom:.3rem;cursor:pointer;}
     .summary-sticky{position:sticky;top:150px;}
     @media(max-width:575.98px){
         .cart-line{grid-template-columns:80px 1fr;grid-template-areas:"thumb info" "thumb qty";row-gap:.5rem;}

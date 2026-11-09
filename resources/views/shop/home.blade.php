@@ -81,14 +81,26 @@
         <section class="section pt-0" aria-labelledby="occasionTitle">
             <x-section-header title="Shop by occasion" eyebrow="Find the perfect gift" heading-id="occasionTitle" />
             <div class="row row-cols-2 row-cols-sm-4 row-cols-lg-{{ min(8, max(4, $occasions->count())) }} g-2 g-md-3">
+                @php
+                    $occasionImageDefaults = [
+                        'birthday' => 'birthday',
+                        'anniversary' => 'anniversary',
+                        'valentines-day' => 'valentines-day',
+                        'graduation' => 'graduation',
+                        'mothers-day' => 'mothers-day',
+                        'baby-shower' => 'baby-shower',
+                        'thank-you' => 'thank-you',
+                        'dashain-tihar' => 'dashain-tihar',
+                    ];
+                @endphp
                 @foreach($occasions as $occ)
                     <div class="col">
                         <a href="{{ route('collections.show', $occ->slug) }}" class="occasion-tile">
-                            @if($occ->image_url)
-                                <img src="{{ $occ->image_url }}" alt="" loading="lazy" width="80" height="80">
-                            @else
-                                <span class="occasion-icon"><i class="bi bi-{{ $occ->icon ?: 'gift' }}" aria-hidden="true"></i></span>
-                            @endif
+                            @php
+                                $occasionImage = $occ->image_url
+                                    ?: asset('images/occasions/'.($occasionImageDefaults[$occ->slug] ?? 'birthday').'.jpg');
+                            @endphp
+                            <img src="{{ $occasionImage }}" alt="{{ $occ->name }}" loading="lazy" width="800" height="800">
                             <span class="fw-semibold">{{ $occ->name }}</span>
                             <small class="text-muted">{{ $occ->products_count }} {{ \Illuminate\Support\Str::plural('gift', $occ->products_count) }}</small>
                         </a>
@@ -188,11 +200,11 @@
     }
     .line-tile{aspect-ratio:4/3;}
     .line-tile .cat-tile-body h3{font-size:1.5rem;}
-    .occasion-tile{display:flex;flex-direction:column;align-items:center;gap:.35rem;text-align:center;padding:1.1rem .5rem;height:100%;
-        background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);color:var(--ink);transition:border-color .2s,transform .2s,box-shadow .2s;}
+    .occasion-tile{display:flex;flex-direction:column;align-items:center;gap:.35rem;text-align:center;padding:.65rem .35rem .8rem;height:100%;
+        background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);color:var(--ink);overflow:hidden;transition:border-color .2s,transform .2s,box-shadow .2s;}
     .occasion-tile:hover{border-color:var(--sage);transform:translateY(-3px);box-shadow:var(--shadow-sm);color:var(--ink);}
-    .occasion-icon{width:56px;height:56px;border-radius:50%;background:var(--accent-soft);color:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
-    .occasion-tile img{width:56px;height:56px;border-radius:50%;object-fit:cover;}
+    .occasion-tile img{flex:0 0 auto;width:clamp(56px,5vw,72px);height:auto;aspect-ratio:1/1;object-fit:contain;
+        background:var(--sage-light);padding:4px;border-radius:var(--radius-sm);margin-bottom:.1rem;}
     .vp{display:flex;gap:.8rem;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.95rem 1rem;height:100%;}
     .vp i{font-size:1.45rem;color:var(--forest);width:44px;height:44px;border-radius:50%;background:var(--sage-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
     .vp strong{display:block;font-size:.9rem;} .vp span{font-size:.8rem;color:var(--muted);}

@@ -29,16 +29,27 @@ class OrderService
      * @param  array{customer_name:string, customer_email?:string, customer_phone:string,
      *               shipping_address?:array, notes?:string}  $data
      */
-    public function placeFromCart(array $data): Order
+    public function placeFromCart(array $data, ?array $itemIds = null): Order
     {
-        $cart   = $this->cart->current(false);
-        $totals = $this->cart->totals($cart);
+        $cart = $this->cart->current(false);
 
-        if (! $cart || $totals['item_count'] === 0) {
+        if (! $cart) {
             throw ValidationException::withMessages(['cart' => 'Your cart is empty.']);
         }
 
-        return DB::transaction(function () use ($cart, $totals, $data) {
+        $items = $cart->items()
+            ->when($itemIds !== null, fn ($query) => $query->whereIn('id', $itemIds))
+            ->with(['product', 'variant'])->get();
+
+        if ($items->isEmpty() || ($itemIds !== null && $items->count() !== count($itemIds))) {
+            throw ValidationException::withMessages([
+                'cart' => $items->isEmpty() ? 'Your cart is empty.' : 'One or more selected items are no longer available in your cart.',
+            ]);
+        }
+
+        $totals = $this->cart->totals($cart, $items);
+
+        return DB::transaction(function () use ($cart, $items, $totals, $data) {
             $pp = $totals['prepayment'];
 
             $order = Order::create([
@@ -60,7 +71,7 @@ class OrderService
                 'advance_amount'       => $pp['advance_amount'],
                 'cod_balance'          => $pp['cod_balance'],
                 'amount_paid'          => 0,
-                'coupon_id'            => $cart->coupon_id,
+                'coupon_id'            => $totals['coupon_code'] ? $cart->coupon_id : null,
                 'coupon_code'          => $totals['coupon_code'],
                 'payment_method'       => $data['payment_method'] ?? $pp['payment_method'],
                 // Orders requiring prepayment start awaiting the advance;
@@ -71,7 +82,7 @@ class OrderService
             ]);
 
             // Snapshot line items + decrement stock
-            foreach ($cart->items as $item) {
+            foreach ($items as $item) {
                 $product = $item->product;
 
                 $order->items()->create([
@@ -90,7 +101,7 @@ class OrderService
             }
 
             // Record coupon usage
-            if ($cart->coupon_id) {
+            if ($totals['coupon_code']) {
                 $cart->coupon?->increment('used_count');
                 if (Auth::id()) {
                     DB::table('coupon_user')->insert([
@@ -110,8 +121,11 @@ class OrderService
                 'changed_by'  => Auth::id(),
             ]);
 
-            // Empty the cart now that it has become an order
-            $this->cart->clear();
+            // Keep unselected cart items and saved items for later.
+            $cart->items()->whereIn('id', $items->modelKeys())->delete();
+            if ($totals['coupon_code'] || ! $cart->items()->exists()) {
+                $this->cart->removeCoupon();
+            }
 
             // Confirm to the customer that their order was received.
             if ($order->user) {

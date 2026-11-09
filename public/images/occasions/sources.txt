@@ -1,0 +1,11 @@
+Default occasion photos are downloaded from Pexels and served locally.
+Pexels photos are offered under the Pexels License.
+
+birthday.jpg       https://images.pexels.com/photos/32333371/pexels-photo-32333371.jpeg
+anniversary.jpg    https://images.pexels.com/photos/15198293/pexels-photo-15198293.jpeg
+valentines-day.jpg https://images.pexels.com/photos/196664/pexels-photo-196664.jpeg
+graduation.jpg     https://images.pexels.com/photos/9829489/pexels-photo-9829489.jpeg
+mothers-day.jpg    https://images.pexels.com/photos/11309667/pexels-photo-11309667.jpeg
+baby-shower.jpg    https://images.pexels.com/photos/9214966/pexels-photo-9214966.jpeg
+thank-you.jpg      https://images.pexels.com/photos/4439414/pexels-photo-4439414.jpeg
+dashain-tihar.jpg  https://images.pexels.com/photos/10182772/pexels-photo-10182772.jpeg

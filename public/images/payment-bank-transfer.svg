@@ -1,7 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="104" height="28" viewBox="0 0 104 28" role="img" aria-labelledby="title">
+<svg xmlns="http://www.w3.org/2000/svg" width="88" height="36" viewBox="0 0 88 36" role="img" aria-labelledby="title">
   <title id="title">Bank transfer</title>
-  <rect width="104" height="28" rx="5" fill="#fff"/>
-  <path d="M7 11 18 5l11 6v2H7zm2 3h3v7H9zm7 0h4v7h-4zm8 0h3v7h-3zM7 22h22v2H7z" fill="#3d4b33"/>
-  <text x="35" y="13" fill="#3d4b33" font-family="Arial,sans-serif" font-size="9" font-weight="700">BANK</text>
-  <text x="35" y="22" fill="#3d4b33" font-family="Arial,sans-serif" font-size="8">TRANSFER</text>
+  <rect width="88" height="36" rx="5" fill="#fff"/>
+  <path d="M18 10 44 3l26 7v3H18zm4 5h5v12h-5zm11 0h5v12h-5zm9 0h5v12h-5zm11 0h5v12h-5zm11 0h5v12h-5zM18 29h52v4H18z" fill="#3d4b33"/>
 </svg>
